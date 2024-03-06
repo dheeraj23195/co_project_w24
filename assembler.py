@@ -8,17 +8,20 @@ op_codes = { #add the opcodes
 
 #r-type-instructions data
 r_type_instruction=["add", "slt", "sltu", "xor", "sll", "srl", "or", "and", "sub"]
-r_type_func3={"add":"000","sub":"000","sll":"001","slt":"010","sltu":"011",
-              "xor":"100","srl":"101","or":"110","and":"111"}
+r_type_func3={"add":"000","sub":"000","sll":"001","slt":"010","sltu":"011","xor":"100","srl":"101","or":"110","and":"111"}
 
 #i-type-instructions data
 i_type_instruction=["lw", "addi", "sltiu", "jalr"]
+i_type_opcodes={"lw":"0000011","addi":"0010011","sltiu":"0010011","jalr":"1100111"}
+i_type_func3={"lw":"010","addi":"000","sltiu":"011","jalr":"000"}
 
 s_type_instruction=["sw"]
 
 b_type_instruction=["beq", "bne", "blt", "bge", "bltu", "bgeu"]
+b_type_func3={"beq":"000","bne":"001","blt":"100","bge":"101","bltu":"110","bgeu":"111"}
 
 u_type_instruction=["lui", "auipc"]
+u_type_opcode={"lui":"0110111","auipc":"0010111"}
 
 j_type_instruction=["jal"]
 
@@ -47,11 +50,23 @@ def ones_complement(binary):
     return int(new_binary)
 
 def r_type_convert(instruction):
-    operation,registers=instruction.split()
-    rd,rs1,rs2=registers.split(",")
+    operation,rd,rs1,rs2=instruction.split()
+    rd=rd.rstrip(",")
+    rs1=rs1.rstrip(",")
     if(operation=="sub"):
         return ("0100000"+rs2+rs1+"000"+rd+op_codes("r_type_instructions"))
     return("0000000"+rs2+rs1+r_type_func3(operation)+rd+op_codes("r_type_instructions"))
+
+def b_type_convert(instruction):
+    operation,rs1,rs2,imm=instruction.split()
+    rs1=rs1.rstrip(",")
+    rs2=rs2.rstrip(",")
+    return(imm[11]+imm[10:4:-1]+rs2+rs1+b_type_func3[operation]+imm[4:0:-1]+"1100011")
+
+def u_type_convert(instruction):
+    operation,rd,imm=instruction.split()
+    rd=rd.rstrip(",")
+    return(imm,rd,u_type_opcode[operation])
 
 input_data=[]
 f=open("input.txt","r")
