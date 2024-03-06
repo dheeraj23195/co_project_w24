@@ -78,9 +78,6 @@ with open("input.txt", "r") as f:
         input_data.append(line.strip())
 
 output_data=[]
-#loop to work on input and convert to output
-#for i in input_data:
-#   output_data.append(func(i)+"\n")
 
 for instruction in input_data:
     if instruction.split()[0] in r_type_instruction:
