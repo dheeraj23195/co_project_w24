@@ -6,9 +6,11 @@ op_codes = { #add the opcodes
     "jal": "0010111",
 }
 
+#r-type-instructions data
 r_type_instruction=["add", "slt", "sltu", "xor", "sll", "srl", "or", "and", "sub"]
 r_type_func3={}
 
+#i-type-instructions data
 i_type_instruction=["lw", "addi", "sltiu", "jalr"]
 
 s_type_instruction=["sw"]
