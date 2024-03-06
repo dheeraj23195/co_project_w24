@@ -31,7 +31,7 @@ def binary_decimal(binary):
     binary_str = str(binary)
     length_binary = len(binary_str)
     decimal = 0
-    if binary_str[0] == 0:
+    if binary_str[0] == "0":
         for i in range (length_binary):
             a = int(binary_str[i])
             power = length_binary - 1 - i
@@ -53,8 +53,8 @@ def r_type_convert(instruction):
     operation,registers=instruction.split()
     rd,rs1,rs2=registers.split(",")
     if(operation=="sub"):
-        return ("0100000"+rs2+rs1+"000"+rd+op_codes("r_type_instructions"))
-    return("0000000"+rs2+rs1+r_type_func3(operation)+rd+op_codes("r_type_instructions"))
+        return ("0100000"+rs2+rs1+"000"+rd+op_codes["r_type_instructions"])
+    return("0000000"+rs2+rs1+r_type_func3[operation]+rd+op_codes["r_type_instructions"])
 
 
 def b_type_convert(instruction):
@@ -63,21 +63,22 @@ def b_type_convert(instruction):
     return(imm[11]+imm[9:4:-1]+rs2+rs1+b_type_func3[operation]+imm[4:0:-1]+imm[10]+"1100011")
 
 def u_type_convert(instruction):
+    global u_type_opcode
     operation,storage=instruction.split()
     rd,imm=storage.split(",")
     return(imm,rd,u_type_opcode[operation])
 
-input_data=[]
-f=open("input.txt","r")
-for x in f:
-    input_data.append(x)
-f.close()
+#input_data=[]
+#f=open("input.txt","r")
+#for x in f:
+#    input_data.append(x)
+#f.close()
 
 output_data=[]
 #loop to work on input and convert to output
 #for i in input_data:
 #   output_data.append(func(i)+"\n")
 
-f1=open("output.txt","a")
-f1.writelines(output_data)
-f1.close()
+#f1=open("output.txt","a")
+#f1.writelines(output_data)
+#f1.close()
