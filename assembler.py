@@ -6,33 +6,20 @@ op_codes = { #add the opcodes
     "jal": "0010111",
 }
 
-r_type_instruction=["add", "slt", "sltu", "xor", "sll", "srl", "or", "and", "sub"]
-r_type_func3={}
+r_type_instruction=[#add the instructions 
+    "add",
+                    "sub"]
 
-i_type_instruction=["lw", "addi", "sltiu", "jalr"]
+i_type_instruction=[#complete the instruction list
+                    "lw","addi"
+]
 
-s_type_instruction=["sw"]
+s_type_instruction=[]
 
-b_type_instruction=["beq", "bne", "blt", "bge", "bltu", "bgeu"]
+b_type_instruction=[]
 
-u_type_instruction=["lui", "auipc"]
+u_type_instruction=[]
 
-j_type_instruction=["jal"]
+j_type_instruction=[]
 
-bonus_instruction=["mul", "rst", "halt", "rvrs"]
-
-
-input_instructions=[]
-f=open("input.txt","r")
-for x in f:
-    input_instructions.append(x)
-f.close()
-
-output_data=[]
-#loop to work on input and convert to output
-#for i in input_instructions:
-#   output_data.append(func(i)+"\n")
-
-f1=open("output.txt","a")
-f1.writelines(output_data)
-f1.close()
+bonus_instruction=[]
