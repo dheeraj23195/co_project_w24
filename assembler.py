@@ -66,7 +66,7 @@ def u_type_convert(instruction):
     global u_type_opcode
     operation,storage=instruction.split()
     rd,imm=storage.split(",")
-    return(imm,rd,u_type_opcode[operation])
+    return(imm+rd+u_type_opcode[operation])
 
 #input_data=[]
 #f=open("input.txt","r")
