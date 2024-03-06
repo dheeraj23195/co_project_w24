@@ -50,22 +50,21 @@ def ones_complement(binary):
     return int(new_binary)
 
 def r_type_convert(instruction):
-    operation,rd,rs1,rs2=instruction.split()
-    rd=rd.rstrip(",")
-    rs1=rs1.rstrip(",")
+    operation,registers=instruction.split()
+    rd,rs1,rs2=registers.split(",")
     if(operation=="sub"):
         return ("0100000"+rs2+rs1+"000"+rd+op_codes("r_type_instructions"))
     return("0000000"+rs2+rs1+r_type_func3(operation)+rd+op_codes("r_type_instructions"))
 
+
 def b_type_convert(instruction):
-    operation,rs1,rs2,imm=instruction.split()
-    rs1=rs1.rstrip(",")
-    rs2=rs2.rstrip(",")
+    operation,storage=instruction.split()
+    rs1,rs2,imm=storage.split(",")
     return(imm[11]+imm[9:4:-1]+rs2+rs1+b_type_func3[operation]+imm[4:0:-1]+imm[10]+"1100011")
 
 def u_type_convert(instruction):
-    operation,rd,imm=instruction.split()
-    rd=rd.rstrip(",")
+    operation,storage=instruction.split()
+    rd,imm=storage.split(",")
     return(imm,rd,u_type_opcode[operation])
 
 input_data=[]
