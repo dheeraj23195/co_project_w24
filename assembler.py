@@ -61,7 +61,7 @@ def b_type_convert(instruction):
     operation,rs1,rs2,imm=instruction.split()
     rs1=rs1.rstrip(",")
     rs2=rs2.rstrip(",")
-    return(imm[11]+imm[10:4:-1]+rs2+rs1+b_type_func3[operation]+imm[4:0:-1]+"1100011")
+    return(imm[11]+imm[9:4:-1]+rs2+rs1+b_type_func3[operation]+imm[4:0:-1]+imm[10]+"1100011")
 
 def u_type_convert(instruction):
     operation,rd,imm=instruction.split()
