@@ -22,7 +22,7 @@ j_type_instruction=["jal"]
 bonus_instruction=["mul", "rst", "halt", "rvrs"]
 
 
-input_instructions=[]
+input_data=[]
 f=open("input.txt","r")
 for x in f:
     input_instructions.append(x)
