@@ -25,12 +25,12 @@ bonus_instruction=["mul", "rst", "halt", "rvrs"]
 input_data=[]
 f=open("input.txt","r")
 for x in f:
-    input_instructions.append(x)
+    input_data.append(x)
 f.close()
 
 output_data=[]
 #loop to work on input and convert to output
-#for i in input_instructions:
+#for i in input_data:
 #   output_data.append(func(i)+"\n")
 
 f1=open("output.txt","a")
