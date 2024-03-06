@@ -8,7 +8,8 @@ op_codes = { #add the opcodes
 
 #r-type-instructions data
 r_type_instruction=["add", "slt", "sltu", "xor", "sll", "srl", "or", "and", "sub"]
-r_type_func3={}
+r_type_func3={"add":"000","sub":"000","sll":"001","slt":"010","sltu":"011",
+              "xor":"100","srl":"101","or":"110","and":"111"}
 
 #i-type-instructions data
 i_type_instruction=["lw", "addi", "sltiu", "jalr"]
@@ -44,6 +45,13 @@ def ones_complement(binary):
         elif binary_str[i] == "1":
             new_binary += "0"
     return int(new_binary)
+
+def r_type_convert(instruction):
+    operation,registers=instruction.split()
+    rd,rs1,rs2=registers.split(",")
+    if(operation=="sub"):
+        return ("0100000"+rs2+rs1+"000"+rd+op_codes("r_type_instructions"))
+    return("0000000"+rs2+rs1+r_type_func3(operation)+rd+op_codes("r_type_instructions"))
 
 input_data=[]
 f=open("input.txt","r")
