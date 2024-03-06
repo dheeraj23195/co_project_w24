@@ -21,6 +21,27 @@ j_type_instruction=["jal"]
 
 bonus_instruction=["mul", "rst", "halt", "rvrs"]
 
+def binary_decimal(binary):
+    binary_str = str(binary)
+    length_binary = len(binary_str)
+    decimal = 0
+    if binary_str[0] == 0:
+        for i in range (length_binary):
+            a = int(binary_str[i])
+            power = length_binary - 1 - i
+            decimal += a*(2**power)
+    return decimal
+
+def ones_complement(binary):
+    binary_str = str(binary)
+    length_binary = len(binary_str)
+    new_binary = ""
+    for i in range(length_binary):
+        if binary_str[i] == "0":
+            new_binary += "1"
+        elif binary_str[i] == "1":
+            new_binary += "0"
+    return int(new_binary)
 
 input_data=[]
 f=open("input.txt","r")
