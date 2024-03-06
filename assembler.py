@@ -21,14 +21,18 @@ i_type_instruction = ["lw", "addi", "sltiu", "jalr"]
 i_type_opcodes = {"lw":"0000011", "addi":"0010011", "sltiu":"0010011", "jalr":"1100111"}
 i_type_func3 = {"lw":"010", "addi":"000", "sltiu":"011", "jalr":"000"}
 
+#s-type-instructions data
 s_type_instruction = ["sw"]
 
+#b-type-instructions data
 b_type_instruction = ["beq", "bne", "blt", "bge", "bltu", "bgeu"]
 b_type_func3 = {"beq":"000", "bne":"001", "blt":"100", "bge":"101", "bltu":"110", "bgeu":"111"}
 
+#u-type-instructions data
 u_type_instruction = ["lui", "auipc"]
 u_type_opcode = {"lui":"0110111", "auipc":"0010111"}
 
+#j-type-instructions data
 j_type_instruction = ["jal"]
 
 bonus_instruction = ["mul", "rst", "halt", "rvrs"]
