@@ -38,19 +38,53 @@ j_type_instruction = ["jal"]
 
 bonus_instruction = ["mul", "rst", "halt", "rvrs"]
 
-def binary_decimal(binary):
-    binary_str = str(binary)
+#registers data
+registers = {
+    "zero": "00000",
+    "ra": "00001",
+    "sp": "00010",
+    "gp": "00011",
+    "tp": "00100",
+    "t0": "00101",
+    "t1": "00110",
+    "t2": "00111",
+    "s0": "01000",
+    "fp": "01000",
+    "s1": "01001",
+    "a0": "01010",
+    "a1": "01011",
+    "a2": "01100",
+    "a3": "01101",
+    "a4": "01110",
+    "a5": "01111",
+    "a6": "10000",
+    "a7": "10001",
+    "s2": "10010",
+    "s3": "10011",
+    "s4": "10100",
+    "s5": "10101",
+    "s6": "10110",
+    "s7": "10111",
+    "s8": "11000",
+    "s9": "11001",
+    "s10": "11010",
+    "s11": "11011",
+    "t3": "11100",
+    "t4": "11101",
+    "t5": "11110",
+    "t6": "11111"
+}
+
+def binary_decimal(binary_str):
     length_binary = len(binary_str)
     decimal = 0
-    if binary_str[0] == '0':
-        for i in range (length_binary):
-            a = int(binary_str[i])
-            power = length_binary - 1 - i
-            decimal += a*(2**power)
+    for i in range (length_binary):
+        a = int(binary_str[i])
+        power = length_binary - 1 - i
+        decimal += a*(2**power)
     return decimal
 
-def ones_complement(binary):
-    binary_str = str(binary)
+def ones_complement(binary_str):
     length_binary = len(binary_str)
     new_binary = ""
     for i in range(length_binary):
@@ -58,7 +92,12 @@ def ones_complement(binary):
             new_binary += "1"
         elif binary_str[i] == "1":
             new_binary += "0"
-    return int(new_binary)
+    return new_binary
+
+def is_Binary_Positive(binary_str):
+    if binary_str[0] == 1:
+        return False
+    return True
 
 def r_type_convert(instruction):
     operation, registers = instruction.split()
