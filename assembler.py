@@ -1,6 +1,7 @@
+#Q1- Creating an assembler that
 #turns assembly code into machine code
 
-#updating the provided information in useable format
+#updating the provided information in useable format 
 op_codes = { #add the opcodes
     "r_type_instructions": "0110011",
     "lw": "0000011",
