@@ -222,9 +222,9 @@ def assemble_code(assembly_code):
         print("Error: No instructions found")
         return None
     if program_memory[current_address - 4] != '00000000000000000000000000000000':  # Virtual Halt
-        print("Error: Missing Virtual Halt instruction")
-        return None
+        program_memory[current_address] = '00000000000000000000000000000000'  # Add virtual halt instruction
     return program_memory
+
 def main():
     if len(sys.argv) < 3:
         print("Usage: python assembler.py <assembly_file> <output_file>")
