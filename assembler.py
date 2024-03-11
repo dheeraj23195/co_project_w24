@@ -181,7 +181,7 @@ def assemble(instruction):
         return j_type_convert(instruction)
     else:
         #throw error of some kind.
-        return "Unknown instruction: " + instruction
+        raise ValueError("Unknown instruction: " + instruction)
 
 
 input_data = []
