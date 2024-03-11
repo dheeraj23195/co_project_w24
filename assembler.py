@@ -75,7 +75,7 @@ registers = {
     "t6": "11111"
 }
 
-def decimal_to_binary(decimal_num):
+def binary_decimal(decimal_num):
     if (decimal_num == 0):
         return '0'
     binary_str = ''
@@ -142,9 +142,9 @@ def i_type_convert(instruction):
 
 def s_type_convert(instruction):
     op,registers=instruction.split()
-    temp=registers.split(",")
+    rs2,temp=registers.split(",")
     imm,rstemp=temp.split("(")
-    rs1=rstemp[0:n]
+    rs1=rstemp[0:len(rstemp)]
     return(imm[11:5]+rs2+rs1+"010"+imm[4:0]+"0100011")
 
 input_data = []
