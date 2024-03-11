@@ -224,7 +224,6 @@ def assemble_code(assembly_code):
     if program_memory[current_address - 4] != '00000000000000000000000000000000':  # Virtual Halt
         program_memory[current_address] = '00000000000000000000000000000000'  # Add virtual halt instruction
     return program_memory
-
 def main():
     if len(sys.argv) < 3:
         print("Usage: python assembler.py <assembly_file> <output_file>")
@@ -243,9 +242,10 @@ def main():
     program_memory = assemble_code(assembly_code)
     if program_memory is not None:
         with open(output_file, 'w') as f:
-            for address in memory_range_program:
-                instruction = program_memory.get(address, '00000000000000000000000000000000')
+            for address in sorted(program_memory.keys()):
+                instruction = program_memory[address]
                 f.write(instruction + '\n')
 
 if __name__ == "__main__":
     main()
+
