@@ -225,13 +225,14 @@ def assemble_code(assembly_code):
         print("Error: Missing Virtual Halt instruction")
         return None
     return program_memory
-
 def main():
-    if len(sys.argv) < 2:
-        print("Usage: python assembler.py <assembly_file>")
+    if len(sys.argv) < 3:
+        print("Usage: python assembler.py <assembly_file> <output_file>")
         return
 
     assembly_file = sys.argv[1]
+    output_file = sys.argv[2]
+
     try:
         with open(assembly_file, 'r') as f:
             assembly_code = f.readlines()
@@ -241,9 +242,10 @@ def main():
 
     program_memory = assemble_code(assembly_code)
     if program_memory is not None:
-        for address in memory_range_program:
-            instruction = program_memory.get(address, '00000000000000000000000000000000')
-            print(instruction)
+        with open(output_file, 'w') as f:
+            for address in memory_range_program:
+                instruction = program_memory.get(address, '00000000000000000000000000000000')
+                f.write(instruction + '\n')
 
 if __name__ == "__main__":
     main()
