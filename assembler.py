@@ -191,14 +191,6 @@ with open("input.txt", "r") as f:
 
 output_data=[]
 
-for instruction in input_data:
-    if instruction.split()[0] in r_type_instruction:
-        output_data.append(r_type_convert(instruction) + "\n")
-    elif instruction.split()[0] in b_type_instruction:
-        output_data.append(b_type_convert(instruction) + "\n")
-    elif instruction.split()[0] in u_type_instruction:
-        output_data.append(u_type_convert(instruction) + "\n")
-
 #with open("output.txt", "a") as f1:
     #f1.writelines(output_data)
 
