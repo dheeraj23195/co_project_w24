@@ -12,7 +12,7 @@ memory_range_stack = range(256, 256 + memory_size_stack)
 memory_size_data = 128
 memory_range_data = range(4096, 4096 + memory_size_data)
 
-op_codes = { # Add the opcodes
+op_codes = {
     "r_type_instructions": "0110011",
     "lw": "0000011",
     "sltiu": "0010011",
@@ -47,6 +47,7 @@ u_type_opcode = {"lui": "0110111", "auipc": "0010111"}
 # j-type-instructions data
 j_type_instruction = ["jal"]
 
+#bonus instructions
 bonus_instruction = ["mul", "rst", "halt", "rvrs"]
 
 # registers data
