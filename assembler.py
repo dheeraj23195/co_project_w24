@@ -126,7 +126,7 @@ def i_type_convert(instruction):
         rd,temp=registers.split(",")
         imm,rstemp=temp.split("(")
         rs1=rstemp[0:n]
-    else if((op=='addi')or(op=='sltiu')):
+    elif((op=='addi')or(op=='sltiu')):
         rd,rs1,imm=registers.split(",")
     else:
         rd,rs1,imm=registers.split(",")
