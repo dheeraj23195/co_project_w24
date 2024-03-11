@@ -1,7 +1,21 @@
 #Q1- Creating an assembler that
 #turns assembly code into machine code
+import sys
 
 #updating the provided information in useable format 
+
+# Program memory size and ranges
+memory_size_program = 256
+memory_range_program = range(0, memory_size_program)
+
+# Stack memory size and ranges
+memory_size_stack = 128
+memory_range_stack = range(256, 256 + memory_size_stack)
+
+# Data memory size and ranges
+memory_size_data = 128
+memory_size_data = range(4096, 4096 + memory_size_data)
+
 op_codes = { #add the opcodes
     "r_type_instructions": "0110011",
     "lw": "0000011",
@@ -75,14 +89,29 @@ registers = {
     "t6": "11111"
 }
 
-def binary_decimal(binary_str):
-    length_binary = len(binary_str)
-    decimal = 0
-    for i in range (length_binary):
-        a = int(binary_str[i])
-        power = length_binary - 1 - i
-        decimal += a*(2**power)
-    return decimal
+def binary_decimal(decimal_num,num_bits):
+    if (decimal_num == 0):
+        return '0'*num_bits
+    binary_str = ''
+    if(decimal_num>0):
+        while decimal_num > 0:
+            remainder = decimal_num % 2
+            binary_str = str(remainder) + binary_str
+            decimal_num //= 2
+        binary_str='0'+binary_str
+        if(len(binary_str)<num_bits):
+            binary_str=binary_str[0]*(num_bits-len(binary_str)) + binary_str
+        return binary_str
+    else:
+        decimal_num=-1*decimal_num
+        while decimal_num > 0:
+            remainder = decimal_num % 2
+            binary_str = str(remainder) + binary_str
+            decimal_num //= 2
+        binary_str='0'+binary_str
+        if(len(binary_str)<num_bits):
+            binary_str=binary_str[0]*(num_bits-len(binary_str)) + binary_str
+        return twos_complement(ones_complement(binary_str))
 
 def ones_complement(binary_str):
     length_binary = len(binary_str)
@@ -95,9 +124,9 @@ def ones_complement(binary_str):
     return new_binary
 
 def twos_complement(ones_complement_str):
-    if(ones_complement_str[len(ones_complement_str)-1]=="0"):
-        return ones_complement_str[0:len(ones_complement_str)-1]+"1"
-    return twos_complement[ones_complement_str[0:len(ones_complement_str)-1]]+"1"
+    if(ones_complement_str[len(ones_complement_str) - 1] == "0"):
+        return ones_complement_str[0:len(ones_complement_str) - 1] + "1"
+    return twos_complement[ones_complement_str[0:len(ones_complement_str) - 1]] + "1"
 
 def is_Binary_Positive(binary_str):
     if binary_str[0] == 1:
@@ -106,60 +135,127 @@ def is_Binary_Positive(binary_str):
 
 def r_type_convert(instruction):
     operation, registers = instruction.split()
-    rd,rs1,rs2=registers.split(",")
+    rd, rs1, rs2 = registers.split(",")
     if(operation == "sub"):
         return("0100000" + rs2 + rs1 + "000" + rd + op_codes["r_type_instructions"])
     return("0000000"+ rs2 +rs1 + r_type_func3(operation) + rd + op_codes["r_type_instructions"])
 
 def b_type_convert(instruction):
     operation, registers = instruction.split()
-    rs1,rs2,imm=registers.split(",")
+    rs1, rs2, imm = registers.split(",")
+    imm = binary_decimal(int(imm),12)
     return(imm[11] + imm[9:4:-1] + rs2 + rs1 + b_type_func3[operation] + imm[4:0:-1] + imm[10] + "1100011")
 
 def u_type_convert(instruction):
     operation, registers = instruction.split()
-    rd,imm = registers.split(",")
+    rd, imm = registers.split(",")
+    imm = binary_decimal(int(imm),20)
     return(imm + rd + u_type_opcode[operation])
 
 def j_type_convert(instruction):
     operation, registers = instruction.split()
-    rd,imm=registers.split(",")
+    rd, imm = registers.split(",")
+    imm = binary_decimal(int(imm),20)
     return(imm[20]+imm[10:1]+imm[11]+imm[19:12]+rd+"1101111")
 
 def i_type_convert(instruction):
-    op,registers= instruction.split()
-    if (op=='lw'):
-        rd,temp=registers.split(",")
-        imm,rstemp=temp.split("(")
-        rs1=rstemp[0:n]
-    elif((op=='addi')or(op=='sltiu')):
-        rd,rs1,imm=registers.split(",")
+    op,registers = instruction.split()
+    if (op == 'lw'):
+        rd, temp = registers.split(",")
+        imm, rstemp = temp.split("(")
+        rs1 = rstemp[0:n]
+    elif((op == 'addi')or(op == 'sltiu')):
+        rd, rs1, imm = registers.split(",")
     else:
-        rd,rs1,imm=registers.split(",")
+        rd, rs1, imm = registers.split(",")
+    imm = binary_decimal(int(imm),12)
     return(imm+rs1+i_type_func3[op]+rd+i_type_opcodes[op])
 
 def s_type_convert(instruction):
-    op,registers=instruction.split()
-    temp=registers.split(",")
-    imm,rstemp=temp.split("(")
-    rs1=rstemp[0:n]
-    return(imm[11:5]+rs2+rs1+"010"+imm[4:0]+"0100011")
+    op, registers = instruction.split()
+    rs2, temp = registers.split(",")
+    imm, rstemp = temp.split("(")
+    rs1 = rstemp[0:len(rstemp)]
+    imm = binary_decimal(int(imm),12)
+    return(imm[11:5] + rs2 + rs1 + "010" + imm[4:0] + "0100011")
 
-input_data = []
-with open("input.txt", "r") as f:
-    for line in f:
-        input_data.append(line.strip())
+def assemble(instruction):
+    op, temp = instruction.split()
+    if op in r_type_instruction:
+        return r_type_convert(instruction)
+    elif op in i_type_instruction:
+        return i_type_convert(instruction)
+    elif op in s_type_instruction:
+        return s_type_convert(instruction)
+    elif op in b_type_instruction:
+        return b_type_convert(instruction)
+    elif op in u_type_instruction:
+        return u_type_convert(instruction)
+    elif op in j_type_instruction:
+        return j_type_convert(instruction)
+    else:
+        #throw error of some kind.
+        return "Unknown instruction: " + instruction
 
-output_data=[]
+def assemble_code(assembly_code):
+    program_memory = {}
+    current_address = 0
+    for line_number, line in enumerate(assembly_code):
+        line = line.strip()
+        if not line or line.startswith("#"):  # Ignore empty lines and comments
+            continue
+        if ':' in line:
+            label, instruction = line.split(':')
+            instruction = instruction.strip()
+            if label.strip() in program_memory:
+                print(f"Error: Duplicate label '{label.strip()}' at line {line_number+1}")
+                return None
+            program_memory[label.strip()] = current_address
+            line = instruction
+        binary_instruction = assemble(line)
+        if binary_instruction is None:
+            print(f"Error: Invalid instruction at line {line_number+1}")
+            return None
+        program_memory[current_address] = binary_instruction
+        current_address += 4
+    if current_address == 0:
+        print("Error: No instructions found")
+        return None
+    if program_memory[current_address - 4] != '00000000000000000000000000000000':  # Virtual Halt
+        print("Error: Missing Virtual Halt instruction")
+        return None
+    return program_memory
 
-for instruction in input_data:
-    if instruction.split()[0] in r_type_instruction:
-        output_data.append(r_type_convert(instruction) + "\n")
-    elif instruction.split()[0] in b_type_instruction:
-        output_data.append(b_type_convert(instruction) + "\n")
-    elif instruction.split()[0] in u_type_instruction:
-        output_data.append(u_type_convert(instruction) + "\n")
+def main():
+    if len(sys.argv) < 2:
+        print("Usage: python assembler.py <assembly_file>")
+        return
 
-with open("output.txt", "a") as f1:
-    f1.writelines(output_data)
-    
+    assembly_file = sys.argv[1]
+    try:
+        with open(assembly_file, 'r') as f:
+            assembly_code = f.readlines()
+    except FileNotFoundError:
+        print(f"Error: File '{assembly_file}' not found")
+        return
+
+    program_memory = assemble(assembly_code)
+    if program_memory is not None:
+        for address in memory_range_program:
+            instruction = program_memory.get(address, '00000000000000000000000000000000')
+            print(instruction)
+
+if __name__=="__main__":
+    main()
+
+#input_data = []
+#with open("input.txt", "r") as f:
+#    for line in f:
+#        input_data.append(line.strip())
+
+#output_data=[]
+
+#with open("output.txt", "a") as f1:
+    #f1.writelines(output_data)
+
+
