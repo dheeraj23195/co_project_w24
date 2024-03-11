@@ -196,3 +196,6 @@ for instruction in input_data:
 
 #with open("output.txt", "a") as f1:
     #f1.writelines(output_data)
+
+if __name__ == "__main__":
+    assemble_instructions("input.txt", "output.txt")
