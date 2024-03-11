@@ -151,6 +151,23 @@ def s_type_convert(instruction):
     imm = binary_decimal(int(imm))
     return(imm[11:5] + rs2 + rs1 + "010" + imm[4:0] + "0100011")
 
+def BYOB(instruction):
+    op,temp=instruction.split()
+    if op in r_type_instruction:
+        return r_type_convert(instruction)
+    elif op in i_type_instruction:
+        return i_type_convert(instruction)
+    elif op in s_type_instruction:
+        return s_type_convert(instruction)
+    elif op in b_type_instruction:
+        return b_type_convert(instruction)
+    elif op in u_type_instruction:
+        return u_type_convert(instruction)
+    elif op in j_type_instruction:
+        return j_type_convert(instruction)
+    else:
+        #throw error of some kind.
+
 input_data = []
 with open("input.txt", "r") as f:
     for line in f:
