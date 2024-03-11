@@ -151,8 +151,8 @@ def s_type_convert(instruction):
     imm = binary_decimal(int(imm))
     return(imm[11:5] + rs2 + rs1 + "010" + imm[4:0] + "0100011")
 
-def BYOB(instruction):
-    op,temp=instruction.split()
+def assemble(instruction):
+    op, temp = instruction.split()
     if op in r_type_instruction:
         return r_type_convert(instruction)
     elif op in i_type_instruction:
@@ -167,13 +167,24 @@ def BYOB(instruction):
         return j_type_convert(instruction)
     else:
         #throw error of some kind.
+        return "Unknown instruction: " + instruction
 
-input_data = []
-with open("input.txt", "r") as f:
-    for line in f:
-        input_data.append(line.strip())
+def assemble_instructions(input_file, output_file):
+    output_data = []
+    with open(input_file, "r") as f:
+        for line in f:
+            line = line.strip()
+            if line:
+                output_data.append(assemble(line) + "\n")
+    with open(output_file, "w") as f1:
+        f1.writelines(output_data)
 
-output_data=[]
+#input_data = []
+#with open("input.txt", "r") as f:
+ #   for line in f:
+  #      input_data.append(line.strip())
+
+#output_data=[]
 
 for instruction in input_data:
     if instruction.split()[0] in r_type_instruction:
@@ -183,5 +194,5 @@ for instruction in input_data:
     elif instruction.split()[0] in u_type_instruction:
         output_data.append(u_type_convert(instruction) + "\n")
 
-with open("output.txt", "a") as f1:
-    f1.writelines(output_data)
+#with open("output.txt", "a") as f1:
+    #f1.writelines(output_data)
