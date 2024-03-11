@@ -96,9 +96,9 @@ def ones_complement(binary_str):
     return new_binary
 
 def twos_complement(ones_complement_str):
-    if(ones_complement_str[len(ones_complement_str)-1]=="0"):
-        return ones_complement_str[0:len(ones_complement_str)-1]+"1"
-    return twos_complement[ones_complement_str[0:len(ones_complement_str)-1]]+"1"
+    if(ones_complement_str[len(ones_complement_str) - 1] == "0"):
+        return ones_complement_str[0:len(ones_complement_str) - 1] + "1"
+    return twos_complement[ones_complement_str[0:len(ones_complement_str) - 1]] + "1"
 
 def is_Binary_Positive(binary_str):
     if binary_str[0] == 1:
@@ -107,45 +107,49 @@ def is_Binary_Positive(binary_str):
 
 def r_type_convert(instruction):
     operation, registers = instruction.split()
-    rd,rs1,rs2=registers.split(",")
+    rd, rs1, rs2 = registers.split(",")
     if(operation == "sub"):
         return("0100000" + rs2 + rs1 + "000" + rd + op_codes["r_type_instructions"])
     return("0000000"+ rs2 +rs1 + r_type_func3(operation) + rd + op_codes["r_type_instructions"])
 
 def b_type_convert(instruction):
     operation, registers = instruction.split()
-    rs1,rs2,imm=registers.split(",")
-    imm=binary_decimal(int(imm))
+    rs1, rs2, imm = registers.split(",")
+    imm = binary_decimal(int(imm))
     return(imm[11] + imm[9:4:-1] + rs2 + rs1 + b_type_func3[operation] + imm[4:0:-1] + imm[10] + "1100011")
 
 def u_type_convert(instruction):
     operation, registers = instruction.split()
-    rd,imm = registers.split(",")
+    rd, imm = registers.split(",")
+    imm = binary_decimal(int(imm))
     return(imm + rd + u_type_opcode[operation])
 
 def j_type_convert(instruction):
     operation, registers = instruction.split()
-    rd,imm=registers.split(",")
+    rd, imm = registers.split(",")
+    imm = binary_decimal(int(imm))
     return(imm[20]+imm[10:1]+imm[11]+imm[19:12]+rd+"1101111")
 
 def i_type_convert(instruction):
-    op,registers= instruction.split()
-    if (op=='lw'):
-        rd,temp=registers.split(",")
-        imm,rstemp=temp.split("(")
-        rs1=rstemp[0:n]
-    elif((op=='addi')or(op=='sltiu')):
-        rd,rs1,imm=registers.split(",")
+    op,registers = instruction.split()
+    if (op == 'lw'):
+        rd, temp = registers.split(",")
+        imm, rstemp = temp.split("(")
+        rs1 = rstemp[0:n]
+    elif((op == 'addi')or(op == 'sltiu')):
+        rd, rs1, imm = registers.split(",")
     else:
-        rd,rs1,imm=registers.split(",")
+        rd, rs1, imm = registers.split(",")
+    imm = binary_decimal(int(imm))
     return(imm+rs1+i_type_func3[op]+rd+i_type_opcodes[op])
 
 def s_type_convert(instruction):
-    op,registers=instruction.split()
-    rs2,temp=registers.split(",")
-    imm,rstemp=temp.split("(")
-    rs1=rstemp[0:len(rstemp)]
-    return(imm[11:5]+rs2+rs1+"010"+imm[4:0]+"0100011")
+    op, registers = instruction.split()
+    rs2, temp = registers.split(",")
+    imm, rstemp = temp.split("(")
+    rs1 = rstemp[0:len(rstemp)]
+    imm = binary_decimal(int(imm))
+    return(imm[11:5] + rs2 + rs1 + "010" + imm[4:0] + "0100011")
 
 input_data = []
 with open("input.txt", "r") as f:
