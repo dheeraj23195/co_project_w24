@@ -1,5 +1,6 @@
 #Q1- Creating an assembler that
 #turns assembly code into machine code
+import sys
 
 #updating the provided information in useable format 
 op_codes = { #add the opcodes
@@ -183,16 +184,63 @@ def assemble(instruction):
         #throw error of some kind.
         return "Unknown instruction: " + instruction
 
+def assemble_code(assembly_code):
+    program_memory = {}
+    current_address = 0
+    for line_number, line in enumerate(assembly_code):
+        line = line.strip()
+        if not line or line.startswith("#"):  # Ignore empty lines and comments
+            continue
+        if ':' in line:
+            label, instruction = line.split(':')
+            instruction = instruction.strip()
+            if label.strip() in program_memory:
+                print(f"Error: Duplicate label '{label.strip()}' at line {line_number+1}")
+                return None
+            program_memory[label.strip()] = current_address
+            line = instruction
+        binary_instruction = assemble(line)
+        if binary_instruction is None:
+            print(f"Error: Invalid instruction at line {line_number+1}")
+            return None
+        program_memory[current_address] = binary_instruction
+        current_address += 4
+    if current_address == 0:
+        print("Error: No instructions found")
+        return None
+    if program_memory[current_address - 4] != '00000000000000000000000000000000':  # Virtual Halt
+        print("Error: Missing Virtual Halt instruction")
+        return None
+    return program_memory
 
-input_data = []
-with open("input.txt", "r") as f:
-    for line in f:
-        input_data.append(line.strip())
+if len(sys.argv) < 2:
+    print("Usage: python assembler.py <assembly_file>")
+    return
 
-output_data=[]
+assembly_file = sys.argv[1]
+try:
+    with open(assembly_file, 'r') as f:
+        assembly_code = f.readlines()
+except FileNotFoundError:
+    print(f"Error: File '{assembly_file}' not found")
+    return
+
+program_memory = assemble(assembly_code)
+if program_memory is not None:
+    for address in PROGRAM_MEMORY_RANGE:
+        instruction = program_memory.get(address, '00000000000000000000000000000000')
+        print(instruction)
+
+
+
+#input_data = []
+#with open("input.txt", "r") as f:
+#    for line in f:
+#        input_data.append(line.strip())
+
+#output_data=[]
 
 #with open("output.txt", "a") as f1:
     #f1.writelines(output_data)
 
-if __name__ == "__main__":
-    assemble_instructions("input.txt", "output.txt")
+
