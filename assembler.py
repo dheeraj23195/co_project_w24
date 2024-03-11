@@ -171,22 +171,13 @@ def assemble(instruction):
         #throw error of some kind.
         return "Unknown instruction: " + instruction
 
-def assemble_instructions(input_file, output_file):
-    output_data = []
-    with open(input_file, "r") as f:
-        for line in f:
-            line = line.strip()
-            if line:
-                output_data.append(assemble(line) + "\n")
-    with open(output_file, "w") as f1:
-        f1.writelines(output_data)
 
-#input_data = []
-#with open("input.txt", "r") as f:
- #   for line in f:
-  #      input_data.append(line.strip())
+input_data = []
+with open("input.txt", "r") as f:
+    for line in f:
+        input_data.append(line.strip())
 
-#output_data=[]
+output_data=[]
 
 for instruction in input_data:
     if instruction.split()[0] in r_type_instruction:
