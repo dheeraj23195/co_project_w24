@@ -75,14 +75,15 @@ registers = {
     "t6": "11111"
 }
 
-def binary_decimal(binary_str):
-    length_binary = len(binary_str)
-    decimal = 0
-    for i in range (length_binary):
-        a = int(binary_str[i])
-        power = length_binary - 1 - i
-        decimal += a*(2**power)
-    return decimal
+def decimal_to_binary(decimal_num):
+    if (decimal_num == 0):
+        return '0'
+    binary_str = ''
+    while decimal_num > 0:
+        remainder = decimal_num % 2
+        binary_str = str(remainder) + binary_str
+        decimal_num //= 2
+    return binary_str
 
 def ones_complement(binary_str):
     length_binary = len(binary_str)
@@ -114,7 +115,7 @@ def r_type_convert(instruction):
 def b_type_convert(instruction):
     operation, registers = instruction.split()
     rs1,rs2,imm=registers.split(",")
-    imm=binary_decimal(imm)
+    imm=binary_decimal(int(imm))
     return(imm[11] + imm[9:4:-1] + rs2 + rs1 + b_type_func3[operation] + imm[4:0:-1] + imm[10] + "1100011")
 
 def u_type_convert(instruction):
