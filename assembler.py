@@ -77,15 +77,27 @@ registers = {
 
 def binary_decimal(decimal_num):
     if (decimal_num == 0):
-        return '0'
+        return '0'*13
     binary_str = ''
-    while decimal_num > 0:
-        remainder = decimal_num % 2
-        binary_str = str(remainder) + binary_str
-        decimal_num //= 2
-    if(len(binary_str)<13):
-        binary_str=binary_str[0]*(13-len(binary_str)) + binary_str
-    return binary_str
+    if(decimal_num>0):
+        while decimal_num > 0:
+            remainder = decimal_num % 2
+            binary_str = str(remainder) + binary_str
+            decimal_num //= 2
+        binary_str='0'+binary_str
+        if(len(binary_str)<13):
+            binary_str=binary_str[0]*(13-len(binary_str)) + binary_str
+        return binary_str
+    else:
+        decimal_num=-1*decimal_num
+        while decimal_num > 0:
+            remainder = decimal_num % 2
+            binary_str = str(remainder) + binary_str
+            decimal_num //= 2
+        binary_str='0'+binary_str
+        if(len(binary_str)<13):
+            binary_str=binary_str[0]*(13-len(binary_str)) + binary_str
+        return twos_complement(ones_complement(binary_str))
 
 def ones_complement(binary_str):
     length_binary = len(binary_str)
