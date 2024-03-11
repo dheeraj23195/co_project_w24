@@ -94,6 +94,11 @@ def ones_complement(binary_str):
             new_binary += "0"
     return new_binary
 
+def twos_complement(ones_complement_str):
+    if(ones_complement_str[len(ones_complement_str)-1]=="0"):
+        return ones_complement_str[0:len(ones_complement_str)-1]+"1"
+    return twos_complement[ones_complement_str[0:len(ones_complement_str)-1]]+"1"
+
 def is_Binary_Positive(binary_str):
     if binary_str[0] == 1:
         return False
