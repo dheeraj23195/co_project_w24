@@ -83,6 +83,8 @@ def binary_decimal(decimal_num):
         remainder = decimal_num % 2
         binary_str = str(remainder) + binary_str
         decimal_num //= 2
+    if(len(binary_str)<13):
+        binary_str=binary_str[0]*(13-len(binary_str)) + binary_str
     return binary_str
 
 def ones_complement(binary_str):
