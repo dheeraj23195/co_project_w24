@@ -114,6 +114,7 @@ def r_type_convert(instruction):
 def b_type_convert(instruction):
     operation, registers = instruction.split()
     rs1,rs2,imm=registers.split(",")
+    imm=binary_decimal(imm)
     return(imm[11] + imm[9:4:-1] + rs2 + rs1 + b_type_func3[operation] + imm[4:0:-1] + imm[10] + "1100011")
 
 def u_type_convert(instruction):
