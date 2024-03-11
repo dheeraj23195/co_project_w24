@@ -125,8 +125,9 @@ def j_type_convert(instruction):
     operation, registers = instruction.split()
     rd,imm=registers.split(",")
     return(imm[20]+imm[10:1]+imm[11]+imm[19:12]+rd+"1101111")
+
 def i_type_convert(instruction):
-    op,registers= instructions.split()
+    op,registers= instruction.split()
     if (op=='lw'):
         rd,temp=registers.split(",")
         imm,rstemp=temp.split("(")
@@ -138,7 +139,7 @@ def i_type_convert(instruction):
     return(imm+rs1+i_type_func3[op]+rd+i_type_opcodes[op])
 
 def s_type_convert(instruction):
-    op,registers=instructions.split()
+    op,registers=instruction.split()
     temp=registers.split(",")
     imm,rstemp=temp.split("(")
     rs1=rstemp[0:n]
