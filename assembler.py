@@ -51,7 +51,7 @@ j_type_instruction = ["jal"]
 bonus_instruction = ["mul", "rst", "halt", "rvrs"]
 
 # registers data
-registers = {
+register_code= {
     "zero": "00000",
     "ra": "00001",
     "sp": "00010",
@@ -135,26 +135,26 @@ def r_type_convert(instruction):
     operation, registers = instruction.split()
     rd, rs1, rs2 = registers.split(",")
     if operation == "sub":
-        return "0100000" + registers[rs2] + registers[rs1] + "000" + registers[rd] + op_codes["r_type_instructions"]
-    return "0000000" + registers[rs2] + registers[rs1] + r_type_func3[operation] + registers[rd] + op_codes["r_type_instructions"]
+        return "0100000" + register_code[rs2] + register_code[rs1] + "000" + register_code[rd] + op_codes["r_type_instructions"]
+    return ("0000000" + register_code[rs2] + register_code[rs1] + r_type_func3[operation] + register_code[rd] + op_codes["r_type_instructions"])
 
 def b_type_convert(instruction):
     operation, registers = instruction.split()
     rs1, rs2, imm = registers.split(",")
     imm = binary_decimal(int(imm), 12)
-    return imm[11] + imm[9:4:-1] + registers[rs2] + registers[rs1] + b_type_func3[operation] + imm[4:0:-1] + imm[10] + "1100011"
+    return imm[11] + imm[9:4:-1] + register_code[rs2] + register_code[rs1] + b_type_func3[operation] + imm[4:0:-1] + imm[10] + "1100011"
 
 def u_type_convert(instruction):
     operation, registers = instruction.split()
     rd, imm = registers.split(",")
     imm = binary_decimal(int(imm), 20)
-    return imm + registers[rd] + u_type_opcode[operation]
+    return imm + register_code[rd] + u_type_opcode[operation]
 
 def j_type_convert(instruction):
     operation, registers = instruction.split()
     rd, imm = registers.split(",")
     imm = binary_decimal(int(imm), 20)
-    return imm[20] + imm[10:1:-1] + imm[11] + imm[19:12] + registers[rd] + "1101111"
+    return imm[20] + imm[10:1:-1] + imm[11] + imm[19:12] + register_code[rd] + "1101111"
 
 def i_type_convert(instruction):
     op, registers = instruction.split()
@@ -167,7 +167,7 @@ def i_type_convert(instruction):
     else:
         rd, rs1, imm = registers.split(",")
     imm = binary_decimal(int(imm), 12)
-    return imm + registers[rs1] + i_type_func3[op] + registers[rd] + i_type_opcodes[op]
+    return imm + register_code[rs1] + i_type_func3[op] + register_code[rd] + i_type_opcodes[op]
 
 def s_type_convert(instruction):
     op, registers = instruction.split()
@@ -175,7 +175,7 @@ def s_type_convert(instruction):
     imm, rstemp = temp.split("(")
     rs1 = rstemp[0:len(rstemp)-1]
     imm = binary_decimal(int(imm), 12)
-    return imm[11:5] + registers[rs2] + registers[rs1] + "010" + imm[4:0] + "0100011"
+    return imm[11:5] + register_code[rs2] + register_code[rs1] + "010" + imm[4:0] + "0100011"
 
 def assemble(instruction):
     op, temp = instruction.split(maxsplit=1)
