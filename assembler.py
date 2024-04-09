@@ -139,10 +139,6 @@ def twos_complement(ones_complement_str):
                 return ones_complement_str[0:i] + "1" + add_str
             add_str += "0"
 
-a = "01000"
-print(twos_complement(ones_complement(a)))
-print(binary_decimal(8,6))
-
 def is_binary_positive(binary_str):
     if binary_str[0] == '1':
         return False
