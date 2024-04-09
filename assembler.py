@@ -88,10 +88,13 @@ register_code= {
 }
 
 def binary_decimal(decimal_num, num_bits):
-    if decimal_num == 0:
-        return '0' * num_bits
+    range_bin = (2**num_bits)/2
     binary_str = ''
-    if decimal_num > 0:
+    if (decimal_num > range_bin-1 or decimal_num < -1*range_bin):
+        return 'Out of range'
+    elif decimal_num == 0:
+        return '0' * num_bits
+    elif decimal_num > 0:
         while decimal_num > 0:
             remainder = decimal_num % 2
             binary_str = str(remainder) + binary_str
@@ -100,7 +103,7 @@ def binary_decimal(decimal_num, num_bits):
         if len(binary_str) < num_bits:
             binary_str = binary_str[0] * (num_bits - len(binary_str)) + binary_str
         return binary_str
-    else:
+    elif decimal_num != -1*range_bin:
         decimal_num = -1 * decimal_num
         while decimal_num > 0:
             remainder = decimal_num % 2
@@ -110,6 +113,10 @@ def binary_decimal(decimal_num, num_bits):
         if len(binary_str) < num_bits:
             binary_str = binary_str[0] * (num_bits - len(binary_str)) + binary_str
         return twos_complement(ones_complement(binary_str))
+    else:
+        binary_string = binary_decimal(decimal_num+1, num_bits)
+        binary_string = binary_string[0:len(binary_string)-1]+"0"
+        return binary_string
 
 def ones_complement(binary_str):
     length_binary = len(binary_str)
@@ -124,7 +131,17 @@ def ones_complement(binary_str):
 def twos_complement(ones_complement_str):
     if ones_complement_str[len(ones_complement_str) - 1] == "0":
         return ones_complement_str[0:len(ones_complement_str) - 1] + "1"
-    return twos_complement[ones_complement_str[0:len(ones_complement_str) - 1]] + "1"
+    else:
+        len_ones_compl_str = len(ones_complement_str)
+        add_str = ""
+        for i in range(len_ones_compl_str-1, -1, -1):
+            if (ones_complement_str[i] == "0"):
+                return ones_complement_str[0:i] + "1" + add_str
+            add_str += "0"
+
+a = "01000"
+print(twos_complement(ones_complement(a)))
+print(binary_decimal(8,6))
 
 def is_binary_positive(binary_str):
     if binary_str[0] == '1':
