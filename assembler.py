@@ -47,9 +47,6 @@ u_type_opcode = {"lui": "0110111", "auipc": "0010111"}
 # j-type-instructions data
 j_type_instruction = ["jal"]
 
-#bonus instructions
-bonus_instruction = ["mul", "rst", "halt", "rvrs"]
-
 # registers data
 register_code= {
     "zero": "00000",
@@ -154,8 +151,10 @@ def r_type_convert(instruction):
 def b_type_convert(instruction):
     operation, registers = instruction.split()
     rs1, rs2, imm = registers.split(",")
-    imm = binary_decimal(int(imm), 12)
-    return imm[11] + imm[9:4:-1] + register_code[rs2] + register_code[rs1] + b_type_func3[operation] + imm[4:0:-1] + imm[10] + "1100011"
+    imm = int(imm)
+    offset = imm // 2  # divide by 2 because of the instruction alignment
+    imm_bin = binary_decimal(offset, 12)
+    return imm_bin[11] + imm_bin[1:11] + register_code[rs2] + register_code[rs1] + b_type_func3[operation] + imm_bin[0] + imm_bin[12:][::-1] + "1100011"
 
 def u_type_convert(instruction):
     operation, registers = instruction.split()
@@ -213,6 +212,7 @@ def assemble(instruction):
 def assemble_code(assembly_code):
     program_memory = {}
     current_address = 0
+
     for line_number, line in enumerate(assembly_code):
         line = line.strip()
         if not line or line.startswith("#"):  # Ignore empty lines and comments
@@ -231,12 +231,19 @@ def assemble_code(assembly_code):
             return None
         program_memory[current_address] = binary_instruction
         current_address += 4
+
+    if current_address % memory_size_program != 0:
+        virtual_halt_address = current_address
+        while virtual_halt_address % memory_size_program != 0:
+            virtual_halt_address += 4
+        program_memory[virtual_halt_address] = '00000000000000000000000000000000'
+
     if current_address == 0:
         print("Error: No instructions found")
         return None
-    if program_memory[current_address - 4] != '00000000000000000000000000000000':  # Virtual Halt
-        program_memory[current_address] = '00000000000000000000000000000000'  # Add virtual halt instruction
+
     return program_memory
+
 def main():
     if len(sys.argv) < 3:
         print("Usage: python assembler.py <assembly_file> <output_file>")
@@ -256,9 +263,9 @@ def main():
     if program_memory is not None:
         with open(output_file, 'w') as f:
             for address in sorted(program_memory.keys()):
-                instruction = program_memory[address]
-                f.write(instruction + '\n')
+                if address in memory_range_program:  # Check if the address is within the program memory range
+                    instruction = program_memory[address]
+                    f.write(instruction + '\n')
 
 if __name__ == "__main__":
     main()
-
