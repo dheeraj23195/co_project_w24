@@ -141,18 +141,24 @@ def is_binary_positive(binary_str):
         return False
     return True
 
-def j_type_convert(instruction):
-    operation, registers = instruction.split()
-    rd, imm = registers.split(",")
-    imm = binary_decimal(int(imm), 20)
-    imm = imm[::-1]
-    return (imm[19] + imm[9:0:-1] + imm[0] + imm[10] + imm[18:10:-1] + register_code[rd] + "1101111")
+def s_type_convert(instruction):
+    op, registers = instruction.split()
+    rs2, temp = registers.split(",")
+    imm, rstemp = temp.split("(")
+    rs1 = rstemp[0:len(rstemp)-1]
+    imm = binary_decimal(int(imm), 12)
+    imm=imm[::-1]
+    return imm[11:4:-1] + register_code[rs2] + register_code[rs1] + "010" + imm[4:0:-1] + imm[0] + "0100011"
 
-i1 = "jal ra,-48"
+i1 = "sw t5,200(gp)"
 
-print(j_type_convert(i1))
+print(s_type_convert(i1))
 
-#11111111111111010000
-#11111111111111010000
-#1 1111101000 111111111000011101111
-#1 1111010000 111111111000011101111
+#000011001000
+#000011001000
+
+#0000110 11110 00011 010 01000 0100011
+#0000110 01111 00001 101 01000 0100011
+
+#00001101111000011010010000100011
+#00001101111000011010010000100011

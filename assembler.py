@@ -229,7 +229,8 @@ def s_type_convert(instruction):
     imm, rstemp = temp.split("(")
     rs1 = rstemp[0:len(rstemp)-1]
     imm = binary_decimal(int(imm), 12)
-    return imm[11:5] + register_code[rs2] + register_code[rs1] + "010" + imm[4:0] + "0100011"
+    imm=imm[::-1]
+    return imm[11:4:-1] + register_code[rs2] + register_code[rs1] + "010" + imm[4:0:-1] + imm[0] + "0100011"
 
 def assemble(instruction):
     op, temp = instruction.split(maxsplit=1)
