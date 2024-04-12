@@ -84,7 +84,7 @@ register_code= {
     "t6": "11111"
 }
 
-def binary_decimal(decimal_num, num_bits):
+"""def binary_decimal(decimal_num, num_bits):
     range_bin = (2**num_bits)/2
     binary_str = ''
     if (decimal_num > range_bin-1 or decimal_num < -1*range_bin):
@@ -101,6 +101,37 @@ def binary_decimal(decimal_num, num_bits):
             binary_str = binary_str[0] * (num_bits - len(binary_str)) + binary_str
         return binary_str
     elif decimal_num != -1*range_bin:
+        decimal_num = -1 * decimal_num
+        while decimal_num > 0:
+            remainder = decimal_num % 2
+            binary_str = str(remainder) + binary_str
+            decimal_num //= 2
+        binary_str = '0' + binary_str
+        if len(binary_str) < num_bits:
+            binary_str = binary_str[0] * (num_bits - len(binary_str)) + binary_str
+        return twos_complement(ones_complement(binary_str))
+    else:
+        binary_string = binary_decimal(decimal_num+1, num_bits)
+        binary_string = binary_string[0:len(binary_string)-1]+"0"
+        return binary_string"""
+
+def binary_decimal(decimal_num, num_bits):
+    range_bin = (2**num_bits)/2
+    binary_str = ''
+    if (decimal_num > range_bin-1 or decimal_num < -1*range_bin):
+        return 'Out of range'
+    elif decimal_num == 0:
+        return '0' * num_bits
+    elif decimal_num > 0:
+        while decimal_num > 0:
+            remainder = decimal_num % 2
+            binary_str = str(remainder) + binary_str
+            decimal_num //= 2
+        binary_str = '0' + binary_str
+        if len(binary_str) < num_bits:
+            binary_str = binary_str[0] * (num_bits - len(binary_str)) + binary_str
+        return binary_str
+    elif decimal_num < 0:
         decimal_num = -1 * decimal_num
         while decimal_num > 0:
             remainder = decimal_num % 2
