@@ -179,11 +179,21 @@ def r_type_convert(instruction):
         return "0100000" + register_code[rs2] + register_code[rs1] + "000" + register_code[rd] + op_codes["r_type_instructions"]
     return ("0000000" + register_code[rs2] + register_code[rs1] + r_type_func3[operation] + register_code[rd] + op_codes["r_type_instructions"])
 
-def b_type_convert(instruction):
+"""def b_type_convert(instruction):
     operation, registers = instruction.split()
     rs1, rs2, imm = registers.split(",")
     imm = int(imm)
     offset = imm // 2  # divide by 2 because of the instruction alignment
+    imm_bin = binary_decimal(offset, 12)
+    return imm_bin[11] + imm_bin[1:11] + register_code[rs2] + register_code[rs1] + b_type_func3[operation] + imm_bin[0] + imm_bin[12:][::-1] + "1100011"
+"""
+def b_type_convert(instruction):
+    operation, registers = instruction.split()
+    if registers == "zero,zero,0":
+        return "00000000000000000000000000000000"  # NOP instruction
+    rs1, rs2, imm = registers.split(",")
+    imm = int(imm)
+    offset = imm - 4  # Adjust offset for bytes, subtracting 4 because PC has already moved past this instruction
     imm_bin = binary_decimal(offset, 12)
     return imm_bin[11] + imm_bin[1:11] + register_code[rs2] + register_code[rs1] + b_type_func3[operation] + imm_bin[0] + imm_bin[12:][::-1] + "1100011"
 
@@ -193,11 +203,19 @@ def u_type_convert(instruction):
     imm = binary_decimal(int(imm), 20)
     return imm + register_code[rd] + u_type_opcode[operation]
 
-def j_type_convert(instruction):
+"""def j_type_convert(instruction):
     operation, registers = instruction.split()
     rd, imm = registers.split(",")
     imm = binary_decimal(int(imm), 20)
-    return imm[20] + imm[10:1:-1] + imm[11] + imm[19:12] + register_code[rd] + "1101111"
+    return (imm[19] + imm[9:-1:-1] + imm[10] + imm[18:11:-1] + register_code[rd] + "1101111")"""
+
+def j_type_convert(instruction):
+    operation, registers = instruction.split()
+    rd, imm = registers.split(",")
+    imm = int(imm)
+    offset = imm // 2  # Divide by 2 because instructions are 32 bits and aligned
+    imm_bin = binary_decimal(offset, 20)
+    return imm_bin[19] + imm_bin[9:-1:-1] + imm_bin[10] + imm_bin[18:10:-1] + register_code[rd] + "1101111"
 
 def i_type_convert(instruction):
     op, registers = instruction.split()
