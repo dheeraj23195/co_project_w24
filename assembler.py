@@ -182,9 +182,10 @@ def r_type_convert(instruction):
 def b_type_convert(instruction):
     operation, registers = instruction.split()
     rs1, rs2, imm = registers.split(",")
-    imm = int(imm)# divide by 2 because of the instruction alignment
+    imm = int(imm)
     imm_bin = binary_decimal(imm, 12)
-    return imm_bin[11] + imm_bin[9:4:-1] + register_code[rs2] + register_code[rs1] + b_type_func3[operation] + imm_bin[4:-1:-1] + imm_bin[10] + "1100011"
+    imm_bin=imm_bin[::-1]
+    return imm_bin[11] + imm_bin[9:3:-1] + register_code[rs2] + register_code[rs1] + b_type_func3[operation] + imm_bin[3:0:-1] +imm_bin[0] + imm_bin[10] + "1100011"
 
 '''def b_type_convert(instruction):
     operation, registers = instruction.split()
