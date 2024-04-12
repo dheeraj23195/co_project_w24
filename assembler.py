@@ -207,7 +207,8 @@ def j_type_convert(instruction):
     operation, registers = instruction.split()
     rd, imm = registers.split(",")
     imm = binary_decimal(int(imm), 20)
-    return (imm[19] + imm[9:-1:-1] + imm[10] + imm[18:10:-1] + register_code[rd] + "1101111")
+    imm = imm[::-1]
+    return (imm[19] + imm[9:0:-1] + imm[0] + imm[10] + imm[18:10:-1] + register_code[rd] + "1101111")
 
 def i_type_convert(instruction):
     op, registers = instruction.split()
