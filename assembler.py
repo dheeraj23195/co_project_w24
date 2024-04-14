@@ -201,7 +201,8 @@ def u_type_convert(instruction):
     operation, registers = instruction.split()
     rd, imm = registers.split(",")
     imm = binary_decimal(int(imm), 20)
-    return imm[::-1] + register_code[rd] + u_type_opcode[operation]
+    imm = imm[::-1]
+    return imm + register_code[rd] + u_type_opcode[operation]
 
 def j_type_convert(instruction):
     operation, registers = instruction.split()
@@ -221,6 +222,7 @@ def i_type_convert(instruction):
     else:
         rd, rs1, imm = registers.split(",")
     imm = binary_decimal(int(imm), 12)
+    imm = imm[::-1]
     return imm + register_code[rs1] + i_type_func3[op] + register_code[rd] + i_type_opcodes[op]
 
 def s_type_convert(instruction):
