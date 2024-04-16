@@ -165,6 +165,7 @@ def binary_to_assembly(binary_instruction):
     return "Unknown instruction"
 
 def execute_instruction(binary_instruction):
+    global pc  # Declare pc as global
     opcode = binary_instruction[-7:]
     if opcode == op_codes["r_type_instructions"]:
         funct7 = binary_instruction[:7]
@@ -216,7 +217,6 @@ def execute_instruction(binary_instruction):
         registers[rd] = (pc + 4) & 0xFFFFFFFF
         pc_new = (registers[rs1] + imm) & 0xFFFFFFFF
         pc_new &= 0xFFFFFFFE  # Ensure LSB is 0
-        global pc
         pc = pc_new
     elif opcode == op_codes["sw"]:
         imm = int(binary_instruction[:7] + binary_instruction[20:25], 2)
@@ -232,7 +232,6 @@ def execute_instruction(binary_instruction):
         rs1 = int(binary_instruction[12:17], 2)
         funct3 = binary_instruction[17:20]
         if (registers[rs1] < registers[rs2]):
-            global pc
             pc = (pc + imm) & 0xFFFFFFFF
     elif opcode == op_codes["auipc"]:
         imm = int(binary_instruction[:20] + "000000000000", 2)
@@ -242,7 +241,6 @@ def execute_instruction(binary_instruction):
         imm = int(binary_instruction[:1] + binary_instruction[12:20] + binary_instruction[11:12] + binary_instruction[1:11] + "0", 2)
         rd = int(binary_instruction[20:25], 2)
         registers[rd] = (pc + 4) & 0xFFFFFFFF
-        global pc
         pc = (pc + imm) & 0xFFFFFFFF
     else:
         print(f"Unknown instruction: {binary_instruction}")
@@ -252,7 +250,7 @@ def run_simulation(input_file, output_file):
         binary_instructions = [line.strip() for line in file]
 
     with open(output_file, "w") as file:
-        global pc
+        global pc  # Declare pc as global
         pc = 0
         for binary_instruction in binary_instructions:
             # Print register state
@@ -270,13 +268,19 @@ def run_simulation(input_file, output_file):
 
 def main():
     if len(sys.argv) != 3:
-        print("Usage: python <filename>.py <inputname>.txt <outputname>.txt")
+        print("Usage: python simulator2.py <input_file> <output_file>")
         sys.exit(1)
 
     input_file = sys.argv[1]
     output_file = sys.argv[2]
 
+    # Initialize the registers and memory
+    global registers, memory, pc
+    registers = [0] * 32
+    memory = [0] * (memory_size_program + memory_size_stack + memory_size_data)
+    pc = 0
+
     run_simulation(input_file, output_file)
 
-if __name__ == "_main_":
+if __name__ == "__main__":
     main()
