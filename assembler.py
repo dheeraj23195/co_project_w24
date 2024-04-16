@@ -115,36 +115,116 @@ register_code= {
         binary_string = binary_string[0:len(binary_string)-1]+"0"
         return binary_string"""
 
-def binary_decimal(decimal_num, num_bits):
-    range_bin = (2**num_bits)/2
+'''def binary_decimal(decimal_num, num_bits):
+    range_bin = (2 ** num_bits) / 2
     binary_str = ''
-    if (decimal_num > range_bin-1 or decimal_num < -1*range_bin):
+    
+    if decimal_num > range_bin - 1 or decimal_num < -1 * range_bin:
         return 'Out of range'
+    
     elif decimal_num == 0:
         return '0' * num_bits
+    
     elif decimal_num > 0:
         while decimal_num > 0:
             remainder = decimal_num % 2
             binary_str = str(remainder) + binary_str
             decimal_num //= 2
-        binary_str = '0' + binary_str
+        
         if len(binary_str) < num_bits:
-            binary_str = binary_str[0] * (num_bits - len(binary_str)) + binary_str
+            binary_str = '0' * (num_bits - len(binary_str)) + binary_str
+        
         return binary_str
+    
     elif decimal_num < 0:
         decimal_num = -1 * decimal_num
         while decimal_num > 0:
             remainder = decimal_num % 2
             binary_str = str(remainder) + binary_str
             decimal_num //= 2
-        binary_str = '0' + binary_str
+        
         if len(binary_str) < num_bits:
-            binary_str = binary_str[0] * (num_bits - len(binary_str)) + binary_str
-        return twos_complement(ones_complement(binary_str))
+            binary_str = '0' * (num_bits - len(binary_str)) + binary_str
+        
+        binary_str = twos_complement(binary_str)
+        return binary_str
+'''
+def decimaltobinary_12(num):
+    num=int(num)
+    if num >= 0:
+        a = num
+        s = ""
+        while a != 0:
+            b = a%2
+            s = s + str(b)
+            a = a//2
+        s = s[::-1]
+        filler = 12 - len(s)
+        if filler < 0:
+            print("num out of Range")
+            s='-1'
+            return s
+        s = filler*"0" + s
+        return s
     else:
-        binary_string = binary_decimal(decimal_num+1, num_bits)
-        binary_string = binary_string[0:len(binary_string)-1]+"0"
-        return binary_string
+        z = abs(num)
+        s = ""
+        cnt = 1
+        temp = z
+        while temp != 0:
+            cnt += 1
+            temp = temp//2
+        a = (2**cnt) - z
+        while a != 0:
+            b = a%2
+            s = s + str(b)
+            a = a//2
+        s = s[::-1]
+        filler = 12 - len(s)
+        if filler < 0:
+            print("num out of Range")
+            s='-1'
+            return s
+        s = filler*"1" + s
+        return s
+def decimaltobinary_32(num):
+    num=int(num)
+    if num >= 0:
+        a = num
+        s = ""
+        while a != 0:
+            b = a%2
+            s += str(b)
+            a = a//2
+        s = s[::-1]
+        filler = 32 - len(s)
+        if filler < 0:
+            print("number out of Range")
+            s='-1'
+            return s
+        s = filler*"0" + s
+        return s
+    else:
+        z = abs(num)
+        s = ""
+        cnt = 1
+        temp = z
+        while temp != 0:
+            cnt += 1
+            temp = temp//2
+        a = (2**cnt) - z
+        while a != 0:
+            b = a%2
+            s = s + str(b)
+            a = a//2
+        s = s[::-1]
+        filler = 32 - len(s)
+        if filler < 0:
+            print("Number out of Range")
+            s='-1'
+            return s
+        s = filler*"1" + s
+        return s
 
 def ones_complement(binary_str):
     length_binary = len(binary_str)
@@ -183,9 +263,10 @@ def b_type_convert(instruction):
     operation, registers = instruction.split()
     rs1, rs2, imm = registers.split(",")
     imm = int(imm)
-    imm_bin = binary_decimal(imm, 12)
-    imm_bin=imm_bin[::-1]
-    return imm_bin[11] + imm_bin[9:3:-1] + register_code[rs2] + register_code[rs1] + b_type_func3[operation] + imm_bin[3:0:-1] +imm_bin[0] + imm_bin[10] + "1100011"
+    #imm_bin = decimaltobinary_12(imm)
+    #imm_bin=imm_bin[::-1]
+    imm_bin = decimaltobinary_32(imm)
+    return imm_bin[-13] + imm_bin[-11:-5] + register_code[rs2] + register_code[rs1] + b_type_func3[operation] + imm_bin[-5:-1] +imm_bin[-12] + "1100011"
 
 '''def b_type_convert(instruction):
     operation, registers = instruction.split()
@@ -200,15 +281,19 @@ def b_type_convert(instruction):
 def u_type_convert(instruction):
     operation, registers = instruction.split()
     rd, imm = registers.split(",")
-    imm = binary_decimal(int(imm), 20)
+    imm = decimaltobinary_32(imm)
     imm = imm[::-1]
-    return imm + register_code[rd] + u_type_opcode[operation]
+    imm=imm[12:]
+    print(len(imm))
+    print(imm)
+    return imm+register_code[rd] + u_type_opcode[operation]
 
 def j_type_convert(instruction):
     operation, registers = instruction.split()
     rd, imm = registers.split(",")
-    imm = binary_decimal(int(imm), 20)
+    imm =decimaltobinary_32(imm)
     imm = imm[::-1]
+    imm=imm[12:]
     return (imm[19] + imm[9:0:-1] + imm[0] + imm[10] + imm[18:10:-1] + register_code[rd] + "1101111")
 
 def i_type_convert(instruction):
@@ -221,8 +306,8 @@ def i_type_convert(instruction):
         rd, rs1, imm = registers.split(",")
     else:
         rd, rs1, imm = registers.split(",")
-    imm = binary_decimal(int(imm), 12)
-    imm = imm[::-1]
+    imm = decimaltobinary_12(imm)
+    #imm = imm[::-1]
     return imm + register_code[rs1] + i_type_func3[op] + register_code[rd] + i_type_opcodes[op]
 
 def s_type_convert(instruction):
@@ -230,7 +315,7 @@ def s_type_convert(instruction):
     rs2, temp = registers.split(",")
     imm, rstemp = temp.split("(")
     rs1 = rstemp[0:len(rstemp)-1]
-    imm = binary_decimal(int(imm), 12)
+    imm = decimaltobinary_12(imm)
     imm=imm[::-1]
     return imm[11:4:-1] + register_code[rs2] + register_code[rs1] + "010" + imm[4:0:-1] + imm[0] + "0100011"
 
