@@ -1,0 +1,13 @@
+lui a0,10
+auipc a1,10
+jal ra,10
+lui a1,100
+auipc a2,100
+jal gp,100
+lui a2,1000
+auipc a3,1000
+jal tp,1000
+lui a3,10000
+auipc a4,10000
+jal sp,10000
+beq zero,zero,0
