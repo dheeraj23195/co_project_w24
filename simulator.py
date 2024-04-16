@@ -13,20 +13,22 @@ memory_size_data = 128
 memory_range_data = range(4096, 4096 + memory_size_data)
 
 op_codes = {
-    "r_type_instructions": "0110011",
+    "r_type": "0110011",
     "lw": "0000011",
+    "addi": "0010011",
     "sltiu": "0010011",
     "jalr": "1100111",
     "sw": "0100011",
+    "beq": "1100011",
     "blt": "1100011",
     "auipc": "0010111",
-    "jal": "0010111"
+    "jal": "1101111",
+    "lui": "0110111"
 }
 
 # r-type-instructions data
 r_type_instruction = ["add", "slt", "sltu", "xor", "sll", "srl", "or", "and", "sub"]
-r_type_func3 = {"add": "000", "sub": "000", "sll": "001", "slt": "010", "sltu": "011", "xor": "100", "srl": "101",
-                "or": "110", "and": "111"}
+r_type_func3 = {"add": "000", "sub": "000", "sll": "001", "slt": "010", "sltu": "011", "xor": "100", "srl": "101", "or": "110", "and": "111"}
 
 # i-type-instructions data
 i_type_instruction = ["lw", "addi", "sltiu", "jalr"]
@@ -91,21 +93,65 @@ def binary_to_assembly(binary_instruction):
     opcode = binary_instruction[-7:]
     if opcode == op_codes["r_type_instructions"]:
         funct7 = binary_instruction[:7]
-        rs2 = binary_instruction[12:17]
-        rs1 = binary_instruction[17:22]
+        rs2 = binary_instruction[17:22]
+        rs1 = binary_instruction[12:17]
         funct3 = binary_instruction[17:20]
         rd = binary_instruction[20:25]
-        if funct7 == "0000000":
-            instruction = list(r_type_func3.keys())[list(r_type_func3.values()).index(funct3)]
-            return f"{instruction} x{int(rd, 2)}, x{int(rs1, 2)}, x{int(rs2, 2)}"
-    elif opcode == op_codes["lw"]:
+        for instr, f3 in r_type_func3.items():
+            if funct3 == f3:
+                return f"{instr} x{int(rd, 2)}, x{int(rs1, 2)}, x{int(rs2, 2)}"
+       # if funct7 == "0000000":
+        #    instruction = list(r_type_func3.keys())[list(r_type_func3.values()).index(funct3)]
+         #   return f"{instruction} x{int(rd, 2)}, x{int(rs1, 2)}, x{int(rs2, 2)}"
+   # elif opcode == op_codes["lw"]:
+     elif opcode in [op_codes["lw"], op_codes["sltiu"], op_codes["jalr"], op_codes["addi"]]:
         imm = binary_instruction[:12]
         rs1 = binary_instruction[12:17]
         funct3 = binary_instruction[17:20]
         rd = binary_instruction[20:25]
-        if opcode == i_type_opcodes["lw"]:
-            instruction = "lw"
-            return f"{instruction} x{int(rd, 2)}, {int(imm, 2)}(x{int(rs1, 2)})"
+        #if opcode == i_type_opcodes["lw"]:
+         #   instruction = "lw"
+          #  return f"{instruction} x{int(rd, 2)}, {int(imm, 2)}(x{int(rs1, 2)})"
+        if funct3 == "010" and opcode == op_codes["lw"]:
+            return f"lw x{int(rd, 2)}, {int(imm, 2)}(x{int(rs1, 2)})"
+        elif funct3 == "011" and opcode == op_codes["sltiu"]:
+            return f"sltiu x{int(rd, 2)}, x{int(rs1, 2)}, {int(imm, 2)}"
+        elif funct3 == "000" and opcode == op_codes["jalr"]:
+            return f"jalr x{int(rd, 2)}, x{int(rs1, 2)}, {int(imm, 2)}"
+    elif opcode == op_codes["sw"]:
+        imm = binary_instruction[:7] + binary_instruction[20:25]
+        rs2 = binary_instruction[12:17]
+        rs1 = binary_instruction[17:22]
+        funct3 = binary_instruction[17:20]
+        if funct3 == s_type_func3["sw"]:
+            return f"sw x{int(rs2, 2)}, {int(imm, 2)}(x{int(rs1, 2)})"
+      #  if opcode == s_type_opcodes["sw"]:
+       #     instruction = "sw"
+        #    return f"{instruction} x{int(rs2, 2)}, {int(imm, 2)}(x{int(rs1, 2)})"
+    elif opcode == op_codes["blt"]:
+        imm = binary_instruction[:1] + binary_instruction[24:31] + binary_instruction[1:7] + binary_instruction[20:24]
+        rs2 = binary_instruction[12:17]
+        rs1 = binary_instruction[17:22]
+        funct3 = binary_instruction[17:20]
+        if funct3 == b_type_func3["blt"]:
+            return f"blt x{int(rs1, 2)}, x{int(rs2, 2)}, {int(imm, 2)}"
+        #if opcode == b_type_opcodes["blt"]:
+         #   instruction = "blt"
+          #  return f"{instruction} x{int(rs1, 2)}, x{int(rs2, 2)}, {int(imm, 2)}"
+    elif opcode == op_codes["auipc"]:
+        imm = binary_instruction[:20]
+        rd = binary_instruction[20:25]
+        return f"auipc x{int(rd, 2)}, {int(imm, 2)}"
+        #if opcode == u_type_opcode["auipc"]:
+         #   instruction = "auipc"
+          #  return f"{instruction} x{int(rd, 2)}, {int(imm, 2)}"
+    elif opcode == op_codes["jal"]:
+        imm = binary_instruction[:1] + binary_instruction[12:20] + binary_instruction[11:12] + binary_instruction[1:11]
+        rd = binary_instruction[20:25]
+        return f"jal x{int(rd, 2)}, {int(imm, 2)}"
+        #if opcode == j_type_opcode["jal"]:
+         #   instruction = "jal"
+          #  return f"{instruction} x{int(rd, 2)}, {int(imm, 2)}"
     elif opcode == op_codes["sltiu"]:
         imm = binary_instruction[:12]
         rs1 = binary_instruction[12:17]
@@ -122,34 +168,6 @@ def binary_to_assembly(binary_instruction):
         if opcode == i_type_opcodes["jalr"]:
             instruction = "jalr"
             return f"{instruction} x{int(rd, 2)}, {int(imm, 2)}(x{int(rs1, 2)})"
-    elif opcode == op_codes["sw"]:
-        imm = binary_instruction[:7] + binary_instruction[20:25]
-        rs2 = binary_instruction[7:12]
-        rs1 = binary_instruction[12:17]
-        funct3 = binary_instruction[17:20]
-        if opcode == s_type_opcodes["sw"]:
-            instruction = "sw"
-            return f"{instruction} x{int(rs2, 2)}, {int(imm, 2)}(x{int(rs1, 2)})"
-    elif opcode == op_codes["blt"]:
-        imm = binary_instruction[:1] + binary_instruction[24:31] + binary_instruction[1:7] + binary_instruction[20:24]
-        rs2 = binary_instruction[7:12]
-        rs1 = binary_instruction[12:17]
-        funct3 = binary_instruction[17:20]
-        if opcode == b_type_opcodes["blt"]:
-            instruction = "blt"
-            return f"{instruction} x{int(rs1, 2)}, x{int(rs2, 2)}, {int(imm, 2)}"
-    elif opcode == op_codes["auipc"]:
-        imm = binary_instruction[:20]
-        rd = binary_instruction[20:25]
-        if opcode == u_type_opcode["auipc"]:
-            instruction = "auipc"
-            return f"{instruction} x{int(rd, 2)}, {int(imm, 2)}"
-    elif opcode == op_codes["jal"]:
-        imm = binary_instruction[:1] + binary_instruction[12:20] + binary_instruction[11:12] + binary_instruction[1:11]
-        rd = binary_instruction[20:25]
-        if opcode == j_type_opcode["jal"]:
-            instruction = "jal"
-            return f"{instruction} x{int(rd, 2)}, {int(imm, 2)}"
 
     return "Unknown instruction"
 assembly_instruction = binary_to_assembly(binary_instruction)
