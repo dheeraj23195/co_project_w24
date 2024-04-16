@@ -281,11 +281,16 @@ def b_type_convert(instruction):
 def u_type_convert(instruction):
     operation, registers = instruction.split()
     rd, imm = registers.split(",")
-    imm = decimaltobinary_32(imm)
-    imm = imm[::-1]
-    imm=imm[12:]
-    print(len(imm))
-    print(imm)
+    if(operation=="lui"):
+        imm=decimaltobinary_32(imm)
+        imm = imm[::-1]
+        imm = imm[12:]
+        imm = imm[::-1]
+    else:
+        imm = decimaltobinary_32(imm)
+        imm = imm[::-1]
+        imm=imm[12:]
+        imm = imm[::-1]
     return imm+register_code[rd] + u_type_opcode[operation]
 
 def j_type_convert(instruction):
@@ -354,7 +359,8 @@ def assemble_code(assembly_code):
                 print(f"Error: Duplicate label '{label.strip()}' at line {line_number + 1}")
                 return None
             program_memory[label.strip()] = current_address
-            line = instruction
+            continue  # Skip adding this line to the program_memory, but keep processing the next line
+
         binary_instruction = assemble(line)
         if binary_instruction is None:
             print(f"Error: Invalid instruction at line {line_number + 1}")
@@ -392,10 +398,13 @@ def main():
     program_memory = assemble_code(assembly_code)
     if program_memory is not None:
         with open(output_file, 'w') as f:
-            for address in sorted(program_memory.keys()):
-                if address in memory_range_program:  # Check if the address is within the program memory range
+            for address in sorted(program_memory.keys(), key=lambda x: (isinstance(x, int), x)):
+                if isinstance(address, int) and address in memory_range_program:
                     instruction = program_memory[address]
-                    f.write(instruction + '\n')
+                    f.write(str(instruction) + '\n')
+                elif isinstance(address, str) and address in program_memory:
+                    instruction = program_memory[address]
+                    f.write(str(instruction) + '\n')
 
 if __name__ == "__main__":
     main()
