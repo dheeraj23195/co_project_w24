@@ -526,7 +526,7 @@ with open(output_file,'w') as f:
         #print("PC:", PC)  # Print the updated value of the program counter after executing the instruction
     
     for key in data_memory:
-        print(key,data_memory[key])
+        f.write(str(key)+':'+str(data_memory[key]))
 
 """while PC <= (len(l1) - 1) * 4:
     instruction = dict1[PC]
