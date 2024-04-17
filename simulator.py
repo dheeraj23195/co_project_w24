@@ -6,17 +6,18 @@ def unsigned(value):
     else:
         return value
 
-def sext(value):
-    # Calculate the number of bits needed for sign extension
-    num_bits = value.bit_length()
 
-    # Sign-extend the value to 32 bits based on the calculated number of bits
-    sign_bit = value & (1 << (num_bits - 1))
-    mask = (1 << num_bits) - 1
-    extension_bits = 32 - num_bits
-    sign_extended_value = value & mask  # Extract the value's bits within the specified range
-    sign_extended_value |= -(sign_bit << extension_bits)  # Apply sign extension
-    return sign_extended_value
+# def sext(value):
+#     # Calculate the number of bits needed for sign extension
+#     num_bits = value.bit_length()
+
+#     # Sign-extend the value to 32 bits based on the calculated number of bits
+#     sign_bit = value & (1 << (num_bits - 1))
+#     mask = (1 << num_bits) - 1
+#     extension_bits = 32 - num_bits
+#     sign_extended_value = value & mask  # Extract the value's bits within the specified range
+#     sign_extended_value |= -(sign_bit << extension_bits)  # Apply sign extension
+#     return sign_extended_value
 
 def signed_binary_to_int(signed_binary_str):
     # Check if the most significant bit is 1 (indicating a negative number)
@@ -29,8 +30,6 @@ def signed_binary_to_int(signed_binary_str):
         # If the most significant bit is 0, convert the binary string to an integer
         return int(signed_binary_str, 2)
 
-
-
 opcode={"0110011":"R",
         "0000011":"I","0010011":"I","0010011":"I","1100111":"I",
         "0100011":"S",
@@ -41,7 +40,7 @@ opcode={"0110011":"R",
 dict = {
     'zero': 0,
     'ra': 0,
-    'sp': 0,
+    'sp': 256,
     'gp': 0,
     'tp': 0,
     't0': 0,
@@ -107,119 +106,76 @@ registers={'00000': 'zero',
            '11110': 't5',
            '11111': 't6'}
 
-program_memory = {}
-stack_memory = {}
-data_memory = {}
 
 
-for i in range(64):
-    address = f'0x{int(i):04X}'
-    program_memory[address] = f'0x{l1[i]}'  # Assuming l1 contains instruction in hexadecimal format
+# print("Program Memory:")
+# for address, instruction in program_memory.items():
+#     print(f'{address}: {instruction}')
 
-for i in range(32):
-    address = f'0x{int(256 + i * 4):04X}'  # Stack memory starts at address 0x0000 0100
-    stack_memory[address] = '0x00000000'  # Initialize stack memory locations to zeros
+# print("\nStack Memory:")
+# for address, value in stack_memory.items():
+#     print(f'{address}: {value}')
 
-
-for i in range(32):
-    address = f'0x{int(0x00100000 + i * 4):08X}'  # Data memory starts at address 0x001 0000
-    data_memory[address] = '0x00000000'  # Initialize data memory locations to zeros
-
-
-print("Program Memory:")
-for address, instruction in program_memory.items():
-    print(f'{address}: {instruction}')
-
-print("\nStack Memory:")
-for address, value in stack_memory.items():
-    print(f'{address}: {value}')
-
-print("\nData Memory:")
-for address, value in data_memory.items():
-    print(f'{address}: {value}')
-
-registers['zero'] = registers['x0']  # Hard-wired zero
-registers['ra'] = registers['x1']    # Return address
-registers['sp'] = registers['x2']    # Stack Pointer
-registers['gp'] = registers['x3']    # Global Pointer
-registers['tp'] = registers['x4']    # Thread Pointer
-registers['t0'] = registers['x5']    # Temporary/alternate link register
-registers['t1'] = registers['x6']    # Temporary register
-registers['t2'] = registers['x7']    # Temporary register
-registers['s0'] = registers['x8']    # Saved register/frame pointer
-registers['s1'] = registers['x9']    # Saved Register
-registers['a0'] = registers['x10']   # Function argument/return value
-registers['a1'] = registers['x11']   # Function argument/return value
-registers['a2'] = registers['x12']   # Function argument
-registers['a3'] = registers['x13']   # Function argument
-registers['a4'] = registers['x14']   # Function argument
-registers['a5'] = registers['x15']   # Function argument
-registers['a6'] = registers['x16']   # Function argument
-registers['a7'] = registers['x17']   # Function argument
-registers['s2'] = registers['x18']   # Saved register
-registers['s3'] = registers['x19']   # Saved register
-registers['s4'] = registers['x20']   # Saved register
-registers['s5'] = registers['x21']   # Saved register
-registers['s6'] = registers['x22']   # Saved register
-registers['s7'] = registers['x23']   # Saved register
-registers['s8'] = registers['x24']   # Saved register
-registers['s9'] = registers['x25']   # Saved register
-registers['s10'] = registers['x26']  # Saved register
-registers['s11'] = registers['x27']  # Saved register
-registers['t3'] = registers['x28']   # Temporary register
-registers['t4'] = registers['x29']   # Temporary register
-registers['t5'] = registers['x30']   # Temporary register
-registers['t6'] = registers['x31']   # Temporary register
+# print("\nData Memory:")
+# for address, value in data_memory.items():
+#     print(f'{address}: {value}')
 
 
-
-def func_B(instruction):
+def b_type(instruction):
     global dict
     global PC
-    immediate=instruction[0]*20+instruction[24]+instruction[1:7]+instruction[20:24]+'0'
+    immediate=instruction[0]+instruction[24]+instruction[1:7]+instruction[20:24]+'0'
+    #immediate=instruction[0]*20+instruction[24]+instruction[1:7]+instruction[20:24]+'0'
     rs2=instruction[7:12]
     rs1=instruction[12:17]
     func3=instruction[17:20]
     opcode=instruction[25:]
 
     if(func3=="000"):
-        if(dict[rs1]==dict[rs2]):
-            PC+=  sext(immediate)
+        if(registers[rs1]=='zero' and registers[rs2]=='zero' and signed_binary_to_int(immediate)==0):
+            print("0b"+decimal_binary_32bits(PC)+" ")
+            for i in list(dict.keys()):
+                print("0b"+decimal_binary_32bits(dict[i])+" ")
+            return PC
+
         else:
-            PC+=4
+            if(dict[registers[rs1]]==dict[registers[rs2]]):
+                PC+= signed_binary_to_int(immediate)
+            else:
+                PC+=4
 
     elif(func3=="001"):
-        if(dict[rs1]!=dict[rs2]):
-            PC+=  sext(immediate)
+        if(dict[registers[rs1]]!=dict[registers[rs2]]):
+            PC+= signed_binary_to_int(immediate)
         else:
             PC+=4
 
     elif(func3=="100"):
-        if(dict[rs1]<dict[rs2]):
-            PC+=  sext(immediate)
+        if(dict[registers[rs1]]<dict[registers[rs2]]):
+            PC+= signed_binary_to_int(immediate)
         else:
             PC+=4
 
     elif(func3=="101"):
-        if(dict[rs1]>dict[rs2]):
-            PC+=  sext(immediate)
+        if(dict[registers[rs1]]>dict[registers[rs2]]):
+            PC+= signed_binary_to_int(immediate)
         else:
             PC+=4
 
     elif(func3=="110"):
-        if(dict[rs1]<dict[rs2]):
-            PC+=  sext(immediate)
+        if(dict[registers[rs1]]<dict[registers[rs2]]):
+            PC+= signed_binary_to_int(immediate)
         else:
             PC+=4
 
     elif(func3=="111"):
-        if(dict[rs1]>dict[rs2]):
-            PC+=  sext(immediate)
+        if(dict[registers[rs1]]>dict[registers[rs2]]):
+            PC+= signed_binary_to_int(immediate)
         else:
             PC+=4
-    pc+=4
     #print program counter
-    print("0b"+decimal_binary_32bits(pc)+" ")
+
+    print("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
@@ -228,131 +184,174 @@ def func_B(instruction):
 def s_type(instruction):
     global dict, data_memory, PC
 
-    imm = instruction[0:7] + instruction  # Immediate value, 7 bits
+    opcode_value = instruction[25:]
+    imm = instruction[0:7] + instruction[20:25]
     imm_value = signed_binary_to_int(imm)
 
-    rs2 = registers[instruction[7:12]]  # Source register 2
-    rs1 = registers[instruction[12:17]]  # Source register 1
+    rs2 = registers[instruction[7:12]]
+    rs1 = registers[instruction[12:17]]
 
-    funct3 = instruction[17:20]  # Funct3 code, 3 bits
+    if opcode_value == '0100011':
+        offset = dict[rs1] + imm_value
+        data_memory[offset] = dict[rs2]
 
-    offset = imm_value + dict[rs1]  # Calculate offset as imm + value in rs1
-    data_memory[offset] = dict[rs2]  # Store rs2 value at calculated memory address
+    PC += 4
 
-    PC += 4  # Increment program counter by 4 for next instruction
-
-    # Print updated program counter and data memory
-    print("PC:", PC)
-    print("Data Memory:")
-    for address, value in data_memory.items():
-        print(f'{hex(address)}: {value}')
+    # print("Data Memory:")
+    # for address, value in data_memory.items():
+    #     print(f'{(address)}: {value}')
+    print("0b"+decimal_binary_32bits(PC)+" ")
+    for i in list(dict.keys()):
+      print("0b"+decimal_binary_32bits(dict[i])+" ")
 
     return PC
 
+# def s_type(instruction):
+#     global dict, data_memory, PC
+
+#     imm = instruction[0:7] + instruction[]  # Immediate value, 7 bits
+#     imm_value = signed_binary_to_int(imm)
+
+#     rs2 = registers[instruction[7:12]]  # Source register 2
+#     rs1 = registers[instruction[12:17]]  # Source register 1
+
+#     funct3 = instruction[17:20]  # Funct3 code, 3 bits
+
+#     offset = imm_value + dict[rs1]  # Calculate offset as imm + value in rs1
+#     data_memory[offset] = dict[rs2]  # Store rs2 value at calculated memory address
+
+#     PC += 4  # Increment program counter by 4 for next instruction
+
+#     # Print updated program counter and data memory
+#     print("PC:", PC)
+#     print("Data Memory:")
+#     for address, value in data_memory.items():
+#         print(f'{hex(address)}: {value}')
+
+#     return PC
+
 def j_type(instruction):
     global dict, PC
-    imm = instruction[0:20]
-
-
+    rd=instruction[20:25]
+    imm=instruction[0]+instruction[12:20]+instruction[11]+instruction[1:11]+'0'
     imm_value = signed_binary_to_int(imm)
+    dict[registers[rd]] = int(PC) + 4
 
-
-    if imm[7] == '1':
-        imm_value -= 1 << 20
-
-
-    target_address = int(PC) + imm_value
-
-
-    target_register = instruction[20:25]
-    dict[target_register] = int(PC) + 4
-    pc+=4
+    PC+=imm_value
     #print program counter
-    print("0b"+decimal_binary_32bits(pc)+" ")
+    print("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
 
+
 def u_type(instruction):
-    global dict, PC
+    global dict, pc
     imm = instruction[0:20]
-
-
-    imm_value = int(imm, 2)
-
-
+    imm_value = signed_binary_to_int(imm)
     opcode = instruction[25:]
     rd = instruction[20:25]
 
     if opcode == "0110111":
         result = imm_value
     elif opcode == "0010111":
-        result = int(PC) + imm_value
-        rd = instruction[20:25]
+        result = int(pc) + imm_value
 
-
-    dict[rd] = str(result)
+    dict[registers[rd]] = (result)
     pc+=4
     #print program counter
-    print("0b"+decimal_binary_32bits(pc)+" ")
+    print("0b"+decimal_binary_32bits(pc))
     for i in list(dict.keys()):
-      print("0b"+decimal_binary_32bits(dict[i])+" ")
-
-    return PC
+      print("0b"+decimal_binary_32bits(dict[i]))
+    return pc
 
 def r_type(instruction):
-    global dict
-    global PC
-    func3 = instruction[18:21]
+    global dict_registers, PC
+    func3 = instruction[17:20]
     func7 = instruction[0:7]
     rd = registers[instruction[20:25]]
     rs1 = registers[instruction[12:17]]
     rs2 = registers[instruction[7:12]]
 
     if func3 == '000' and func7 == '0000000':
-        # ADD
         dict[rd] = dict[rs1] + dict[rs2]
 
     elif func3 == '000' and func7 == '0100000' and rs1 == "00000":
-        # SUB
-        dict[rd] = 0 - dict[rs2]
+        dict[rd] = 0 - dict[rs2]  # Two’s complement
+
     elif func3 == '000' and func7 == '0100000':
-        # SUB
-        dict[rd] = dict[rs1] - dict[rs2]
+        dict[rd] = dict[rs1] - dict[rs2]  # signed(rs1) - signed(rs2)
+
     elif func3 == '001' and func7 == '0000000':
-        # SLL
-        dict[rd] = [rs1] <<dict[rs2]
-    elif func3 == '010' and func7 == '0000000':
-        # SLT
-        if dict[rs1] < int(dict[rs2]):
-            dict[rd] = 1
-        else:
-            dict[rd] = 0
-    elif func3 == '011' and func7 == '0000000':
-        # SLTU
         if dict[rs1] < dict[rs2]:
             dict[rd] = 1
         else:
             dict[rd] = 0
-    elif func3 == '100' and func7 == '0000000':
-        # XOR
-        dict[rd] = int(dict[rs1]) ^ int(dict[rs2])
-    elif func3 == '101' and func7 == '0000000':
-        # SRL
-        dict[rd] = dict[rs1] >> dict[rs2]
-    elif func3 == '110' and func7 == '0000000':
-        # OR
-        dict[rd] = dict[rs1] | int(dict[rs2])
-    elif func3 == '111' and func7 == '0000000':
-        # AND
-        dict[rd] = int(dict[rs1]) & int(dict[rs2])
 
-    pc+=4
+    elif func3 == '010' and func7 == '0000000':
+        if (dict[rs1]) < (dict[rs2]):
+            dict[rd] = 1
+        else:
+            dict[rd] = 0
+
+    elif func3 == '100' and func7 == '0000000':
+        dict[rd] = int(dict[rs1]) ^ int(dict[rs2])  # Bitwise Exor
+
+    elif func3 == '101' and func7 == '0000000':
+        shift_count = (dict[rs2][0:5])
+        # Ensure shift count is non-negative
+        shift_count = max(shift_count, 0)
+        dict[rd] = dict[rs1] << shift_count  # Left shift rs1 by the non-negative value in lower 5 bits of rs2
+
+    elif func3 == '101' and func7 == '0100000':
+        shift_count = (dict[rs2][0:5])
+        # Ensure shift count is non-negative
+        shift_count = max(shift_count, 0)
+        dict[rd] = dict[rs1] >> shift_count  # Right shift rs1 by the non-negative value in lower 5 bits of rs2
+
+    elif func3 == '110' and func7 == '0000000':
+        dict[rd] = int(dict[rs1]) | int(dict[rs2])  # Bitwise logical or.
+
+    elif func3 == '111' and func7 == '0000000':
+        dict[rd] = int(dict[rs1]) & int(dict[rs2])  # Bitwise logical and.
+
+    PC+=4
     #print program counter
-    print("0b"+decimal_binary_32bits(pc)+" ")
+    print("0b"+decimal_binary_32bits(PC),sep=" ")
     for i in list(dict.keys()):
-      print("0b"+decimal_binary_32bits(dict[i])+" ")
+      print("0b"+decimal_binary_32bits(dict[i]),sep=" ")
+    return PC
+
+
+
+def i_type(instruction):
+    global dict, data_memory, PC
+
+    opcode_value = instruction[25:]
+    imm = instruction[0:12]
+    imm_value = signed_binary_to_int(imm)
+
+    rd = registers[instruction[20:25]]
+    rs1 = registers[instruction[12:17]]
+
+    if opcode_value == '0000011':
+        offset = dict[rs1] + imm_value
+        dict[rd] = data_memory[offset]
+
+    elif opcode_value == '0010011':
+        dict[rd] = dict[rs1] + imm_value
+
+    elif opcode_value == '1100111':
+        dict[rd] = PC + 4
+        PC = (dict['t1'] + imm_value) & 0xFFFFFFFE
+        print("pc ",PC)
+
+    PC += 4
+
+    print("0b"+decimal_binary_32bits(PC),sep=" ")
+    for i in list(dict.keys()):
+      print("0b"+decimal_binary_32bits(dict[i]),sep=" ")
     return PC
 
 
@@ -394,39 +393,99 @@ def decimal_binary_32bits(b):
             ans = str(a % 2) + ans
             a = a // 2
             cnt += 1
-        ans = "0" * (32 - cnt) + ans
+        ans = "1" * (32 - cnt) + ans
         ans = complement(ans)
     return ans
 
 
 
 l1=[]
+l2=[]
 dict1={}
 with open(r'C:\Users\HP\OneDrive\Desktop\c++\project_co\co_simulator\text.txt',"r") as f:
     data=f.readlines()
     for lines in data:
         l1.append(lines.strip())
-        dict1[data.index(lines)*4]=lines.strip()
+        lines=(lines.strip())
+        dict1[l1.index(lines)*4]=lines
+        lines=int(lines)
+        l2.append(f'0x{lines:0>8X}')
 
 
-    # dict1={0:"10000000000000",4:"010111111111111111"}
-    #  l1=["10000000000000","010111111111111111"]
+
+program_memory = {}
+stack_memory = {}
+data_memory = {}
 
 
-pc=0
-while(pc<virual_halt):
-    instruction=dict1[pc]
-    opcode_value=instruction[25:]
-    temp=opcode[opcode_value]
-    if temp=="R":
-        pc=r_type(instruction)
-    elif temp=="S":
-        pc=s_type(instruction)
-    elif temp=="I":
-        pc=i_type(instruction)
-    elif temp=="J":
-        pc=j_type(instruction)
-    elif temp=="B":
-        pc=b_type(instruction)
-    elif temp=="U":
-        pc=u_type(instruction)
+# for i in range(64):
+#     address = f'0x{int(i):04X}'
+#     program_memory[address] = f'0x{l2[i]}'  # Assuming l1 contains instruction in hexadecimal format
+
+for i in range(32):
+    address = f'0x{int(256 + i * 4):04X}'  # Stack memory starts at address 0x0000 0100
+    stack_memory[address] = '0x00000000'  # Initialize stack memory locations to zeros
+
+
+for i in range(32):
+    address = f'0x{int(0x00100000 + i * 4):08X}'  # Data memory starts at address 0x001 0000
+    data_memory[address] = '0x00000000'  # Initialize data memory locations to zeros
+
+
+
+PC=0
+# print((len(l1)-1)*4)
+# while(PC<=(len(l1)-1)*4):
+#     instruction=dict1[PC]
+#     opcode_value=instruction[25:]
+#     temp=opcode[opcode_value]
+#     if temp=="R":
+#         PC=r_type(instruction)
+#     elif temp=="S":
+#         PC=s_type(instruction)
+#     elif temp=="I":
+#         PC=i_type(instruction)
+#     elif temp=="J":
+#         PC=j_type(instruction)
+#     elif temp=="B":
+#         PC=b_type(instruction)
+#     elif temp=="U":
+#         PC=u_type(instruction)
+
+# while(True and PC<=(len(l1)-1)*4):
+#     instruction=dict1[PC]
+#     opcode_value=instruction[25:]
+#     temp=opcode[opcode_value]
+#     if temp=="R":
+#         PC=r_type(instruction)
+#     elif temp=="S":
+#         PC=s_type(instruction)
+#     elif temp=="I":
+#         PC=i_type(instruction)
+#     elif temp=="J":
+#         PC=j_type(instruction)
+#     elif temp=="B":
+#         PC=b_type(instruction)
+#     elif temp=="U":
+#         PC=u_type(instruction)
+
+while PC <= (len(l1) - 1) * 4:
+    instruction = dict1[PC]
+    print("Instruction:", instruction)  # Print the current instruction being executed
+    opcode_value = instruction[25:]
+    print("Opcode value:", opcode_value)  # Print the opcode value of the instruction
+    temp = opcode[opcode_value]
+    print("Temp:", temp)  # Print the type of instruction (R, S, I, J, B, U)
+    if temp == "R":
+        PC = r_type(instruction)
+    elif temp == "S":
+        PC = s_type(instruction)
+    elif temp == "I":
+        PC = i_type(instruction)
+    elif temp == "J":
+        PC = j_type(instruction)
+    elif temp == "B":
+        PC = b_type(instruction)
+    elif temp == "U":
+        PC = u_type(instruction)
+    print("PC:", PC)  # Print the updated value of the program counter after executing the instructio
