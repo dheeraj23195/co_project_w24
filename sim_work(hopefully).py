@@ -110,7 +110,17 @@ registers={'00000': 'zero',
            '11110': 't5',
            '11111': 't6'}
 
-
+def int_to_hexadecimal(number):
+    # Using built-in function hex() to convert integer to hexadecimal
+    hexadecimal = hex(number)
+    
+    # Convert the hexadecimal string to uppercase
+    hexadecimal = hexadecimal.upper()
+    
+    # Add '0x' prefix to the hexadecimal string
+    hexadecimal = '0x' + hexadecimal[2:].zfill(8)  # zfill adds leading zeros to make it 8 characters long
+    
+    return hexadecimal
 
 # print("Program Memory:")
 # for address, instruction in program_memory.items():
@@ -200,8 +210,9 @@ def s_type(instruction):
     rs1 = registers[instruction[12:17]]
 
     if opcode_value == '0100011':
-        offset = dict[rs1] + imm_value
-        data_memory[offset] = dict[rs2]
+        offset = int_to_hexadecimal(dict[rs1] + imm_value)
+
+        data_memory[offset] = "0b"+decimal_binary_32bits(dict[(rs2)])
 
     PC += 4
 
@@ -455,12 +466,13 @@ data_memory = {}
 
 for i in range(32):
     address = f'0x{int(256 + i * 4):04X}'  # Stack memory starts at address 0x0000 0100
-    stack_memory[address] = '0x00000000'  # Initialize stack memory locations to zeros
+    #stack_memory[address] = '0x00000000'  # Initialize stack memory locations to zeros
+    stack_memory[address] = "0b"+decimal_binary_32bits(0)
 
 
 for i in range(32):
     address = f'0x{int(0x00100000 + i * 4):08X}'  # Data memory starts at address 0x001 0000
-    data_memory[address] = '0x00000000'  # Initialize data memory locations to zeros
+    data_memory[address] = '0b'+decimal_binary_32bits(0)  # Initialize data memory locations to zeros
 
 
 
