@@ -137,9 +137,11 @@ def b_type(instruction):
 
     if(func3=="000"):
         if(registers[rs1]=='zero' and registers[rs2]=='zero' and signed_binary_to_int(immediate)==0):
-            print("0b"+decimal_binary_32bits(PC)+" ")
+            #print("0b"+decimal_binary_32bits(PC)+" ")
+            f.write("0b"+decimal_binary_32bits(PC)+" ")
             for i in list(dict.keys()):
-                print("0b"+decimal_binary_32bits(dict[i])+" ")
+                #print("0b"+decimal_binary_32bits(dict[i])+" ")
+                f.write("0b"+decimal_binary_32bits(dict[i])+" ")
             return PC
 
         else:
@@ -179,10 +181,10 @@ def b_type(instruction):
             PC+=4
     #print program counter
 
-    print("0b"+decimal_binary_32bits(PC)+" ")
+    #print("0b"+decimal_binary_32bits(PC)+" ")
     f.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
-      print("0b"+decimal_binary_32bits(dict[i])+" ")
+      #print("0b"+decimal_binary_32bits(dict[i])+" ")
       f.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
@@ -206,10 +208,10 @@ def s_type(instruction):
     # print("Data Memory:")
     # for address, value in data_memory.items():
     #     print(f'{(address)}: {value}')
-    print("0b"+decimal_binary_32bits(PC)+" ")
+    #print("0b"+decimal_binary_32bits(PC)+" ")
     f.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
-      print("0b"+decimal_binary_32bits(dict[i])+" ")
+      #print("0b"+decimal_binary_32bits(dict[i])+" ")
       f.write("0b"+decimal_binary_32bits(PC)+" ")
 
     return PC
@@ -247,10 +249,10 @@ def j_type(instruction):
 
     PC+=imm_value
     #print program counter
-    print("0b"+decimal_binary_32bits(PC)+" ")
+    #print("0b"+decimal_binary_32bits(PC)+" ")
     f.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
-      print("0b"+decimal_binary_32bits(dict[i])+" ")
+      #print("0b"+decimal_binary_32bits(dict[i])+" ")
       f.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
@@ -271,11 +273,11 @@ def u_type(instruction):
     dict[registers[rd]] = (result)
     PC+=4
     #print program counter
-    print("0b"+decimal_binary_32bits(PC))
-    f.write("0b"+decimal_binary_32bits(PC))
+    #print("0b"+decimal_binary_32bits(PC))
+    f.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
-      print("0b"+decimal_binary_32bits(dict[i]))
-      f.write("0b"+decimal_binary_32bits(PC))
+      #print("0b"+decimal_binary_32bits(dict[i]))
+      f.write("0b"+decimal_binary_32bits(PC)+" ")
     return PC
 
 def r_type(instruction):
@@ -333,11 +335,11 @@ def r_type(instruction):
 
     PC+=4
     #print program counter
-    print("0b"+decimal_binary_32bits(PC),sep=" ")
+    #print("0b"+decimal_binary_32bits(PC),sep=" ")
     #output_file.write("0b"+decimal_binary_32bits(PC)+" ")
     f.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
-      print("0b"+decimal_binary_32bits(dict[i]),sep=" ")
+      #print("0b"+decimal_binary_32bits(dict[i]),sep=" ")
       f.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
@@ -368,10 +370,10 @@ def i_type(instruction):
 
     PC += 4
 
-    print("0b"+decimal_binary_32bits(PC))
+    #print("0b"+decimal_binary_32bits(PC))
     f.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
-        print("0b"+decimal_binary_32bits(dict[i]))
+        #print("0b"+decimal_binary_32bits(dict[i]))
         f.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
@@ -526,7 +528,7 @@ with open(output_file,'w') as f:
         #print("PC:", PC)  # Print the updated value of the program counter after executing the instruction
     
     for key in data_memory:
-        f.write(str(key)+':'+str(data_memory[key]))
+        f.write(str(key)+':'+str(data_memory[key])+'\n')
 
 """while PC <= (len(l1) - 1) * 4:
     instruction = dict1[PC]
