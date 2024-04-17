@@ -2,6 +2,8 @@ import sys
 input_file=sys.argv[1]
 output_file=sys.argv[2]
 
+
+
 def unsigned(value):
     # Check if the value is less than 0
     if value < 0:
@@ -427,7 +429,7 @@ def decimal_binary_32bits(b):
             ans = str(a % 2) + ans
             a = a // 2
             cnt += 1
-        ans = "1" * (32 - cnt) + ans
+        ans = "0" * (32 - cnt) + ans
         ans = complement(ans)
     return ans
 
