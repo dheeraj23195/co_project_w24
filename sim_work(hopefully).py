@@ -206,6 +206,7 @@ def s_type(instruction):
 
     opcode_value = instruction[25:]
     imm = instruction[0:7] + instruction[20:25]
+    print(imm)
     imm_value = signed_binary_to_int(imm)
 
     rs2 = registers[instruction[7:12]]
@@ -213,8 +214,8 @@ def s_type(instruction):
 
     if opcode_value == '0100011':
         offset = int_to_hexadecimal(dict[rs1] + imm_value)
-
-        data_memory[offset] = "0b"+decimal_binary_32bits(dict[(rs2)])
+        print(imm_value,dict[rs1],offset)
+        data_memory[offset] = "0b"+decimal_binary_32bits(dict[rs2])
 
     PC += 4
 
