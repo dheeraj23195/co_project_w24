@@ -180,10 +180,10 @@ def b_type(instruction):
     #print program counter
 
     print("0b"+decimal_binary_32bits(PC)+" ")
-    output_file.write("0b"+decimal_binary_32bits(PC)+" ")
+    f.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i])+" ")
-      output_file.write("0b"+decimal_binary_32bits(dict[i])+" ")
+      f.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
 
@@ -207,10 +207,10 @@ def s_type(instruction):
     # for address, value in data_memory.items():
     #     print(f'{(address)}: {value}')
     print("0b"+decimal_binary_32bits(PC)+" ")
-    output_file.write("0b"+decimal_binary_32bits(PC)+" ")
+    f.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i])+" ")
-      output_file.write("0b"+decimal_binary_32bits(PC)+" ")
+      f.write("0b"+decimal_binary_32bits(PC)+" ")
 
     return PC
 
@@ -248,10 +248,10 @@ def j_type(instruction):
     PC+=imm_value
     #print program counter
     print("0b"+decimal_binary_32bits(PC)+" ")
-    output_file.write("0b"+decimal_binary_32bits(PC)+" ")
+    f.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i])+" ")
-      output_file.write("0b"+decimal_binary_32bits(dict[i])+" ")
+      f.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
 
@@ -272,10 +272,10 @@ def u_type(instruction):
     PC+=4
     #print program counter
     print("0b"+decimal_binary_32bits(PC))
-    output_file.write("0b"+decimal_binary_32bits(PC))
+    f.write("0b"+decimal_binary_32bits(PC))
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i]))
-      output_file.write("0b"+decimal_binary_32bits(PC))
+      f.write("0b"+decimal_binary_32bits(PC))
     return PC
 
 def r_type(instruction):
@@ -334,10 +334,11 @@ def r_type(instruction):
     PC+=4
     #print program counter
     print("0b"+decimal_binary_32bits(PC),sep=" ")
-    output_file.write("0b"+decimal_binary_32bits(PC)+" ")
+    #output_file.write("0b"+decimal_binary_32bits(PC)+" ")
+    f.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i]),sep=" ")
-      output_file.write("0b"+decimal_binary_32bits(dict[i])+" ")
+      f.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
 
@@ -368,10 +369,10 @@ def i_type(instruction):
     PC += 4
 
     print("0b"+decimal_binary_32bits(PC))
-    output_file.write("0b"+decimal_binary_32bits(PC)+" ")
+    f.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
         print("0b"+decimal_binary_32bits(dict[i]))
-        output_file.write("0b"+decimal_binary_32bits(dict[i])+" ")
+        f.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
 
@@ -497,7 +498,7 @@ PC=0
 #     elif temp=="U":
 #         PC=u_type(instruction)
 #output_file = open(r"C:\Users\garvi\OneDrive\Desktop\GARVIT\study material\co_project_w24\s_output.txt", "w")
-with open(output_file,"w") as f:
+with open(output_file,'w') as f:
     while (PC <= (len(l1) - 1) * 4) :
         instruction = dict1[PC]
         if (str(instruction)=="00000000000000000000000001100011"):
