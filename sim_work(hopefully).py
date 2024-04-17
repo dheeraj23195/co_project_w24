@@ -326,7 +326,7 @@ def decimal_binary_32bits(b):
 l1=[]
 l2=[]
 dict1={}
-with open(r'C:\Users\HP\OneDrive\Desktop\c++\project_co\co_simulator\text.txt',"r") as f:
+with open(r"C:\Users\garvi\OneDrive\Desktop\GARVIT\study material\co_project_w24\s_test2.txt","r") as f:
     data=f.readlines()
     for lines in data:
         l1.append(lines.strip())
