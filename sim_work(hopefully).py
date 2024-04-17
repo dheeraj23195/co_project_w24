@@ -1,3 +1,7 @@
+import sys
+input_file=sys.argv[1]
+output_file=sys.argv[2]
+
 def unsigned(value):
     # Check if the value is less than 0
     if value < 0:
@@ -418,7 +422,8 @@ def decimal_binary_32bits(b):
 l1=[]
 l2=[]
 dict1={}
-with open(r"C:\Users\garvi\OneDrive\Desktop\GARVIT\study material\co_project_w24\s_test3.txt","r") as f:
+#with open(r"C:\Users\garvi\OneDrive\Desktop\GARVIT\study material\co_project_w24\s_test3.txt","r") as f:
+with open(input_file,"r") as f:
     data=f.readlines()
     count=0
     for lines in data:
@@ -491,32 +496,36 @@ PC=0
 #         PC=b_type(instruction)
 #     elif temp=="U":
 #         PC=u_type(instruction)
-output_file = open(r"C:\Users\garvi\OneDrive\Desktop\GARVIT\study material\co_project_w24\s_output.txt", "w")
-while (PC <= (len(l1) - 1) * 4) :
-    instruction = dict1[PC]
-    if (str(instruction)=="00000000000000000000000001100011"):
-        break
-    #elif (str(instruction)=="00000000000000000000000001100011" and len(l1)!=(PC//4)+1):
-        #print("error")
-        #break
-    #print("Instruction:", instruction)  # Print the current instruction being executed
-    opcode_value = instruction[25:]
-    #print("Opcode value:", opcode_value)  # Print the opcode value of the instruction
-    temp = opcode[opcode_value]
-    #print("Temp:", temp)  # Print the type of instruction (R, S, I, J, B, U)
-    if temp == "R":
-        PC = r_type(instruction)
-    elif temp == "S":
-        PC = s_type(instruction)
-    elif temp == "I":
-        PC = i_type(instruction)
-    elif temp == "J":
-        PC = j_type(instruction)
-    elif temp == "B":
-        PC = b_type(instruction)
-    elif temp == "U":
-        PC = u_type(instruction)
-    #print("PC:", PC)  # Print the updated value of the program counter after executing the instruction
+#output_file = open(r"C:\Users\garvi\OneDrive\Desktop\GARVIT\study material\co_project_w24\s_output.txt", "w")
+with open(output_file,"w") as f:
+    while (PC <= (len(l1) - 1) * 4) :
+        instruction = dict1[PC]
+        if (str(instruction)=="00000000000000000000000001100011"):
+            break
+        #elif (str(instruction)=="00000000000000000000000001100011" and len(l1)!=(PC//4)+1):
+            #print("error")
+            #break
+        #print("Instruction:", instruction)  # Print the current instruction being executed
+        opcode_value = instruction[25:]
+        #print("Opcode value:", opcode_value)  # Print the opcode value of the instruction
+        temp = opcode[opcode_value]
+        #print("Temp:", temp)  # Print the type of instruction (R, S, I, J, B, U)
+        if temp == "R":
+            PC = r_type(instruction)
+        elif temp == "S":
+            PC = s_type(instruction)
+        elif temp == "I":
+            PC = i_type(instruction)
+        elif temp == "J":
+            PC = j_type(instruction)
+        elif temp == "B":
+            PC = b_type(instruction)
+        elif temp == "U":
+            PC = u_type(instruction)
+        #print("PC:", PC)  # Print the updated value of the program counter after executing the instruction
+    
+    for key in data_memory:
+        print(key,data_memory[key])
 
 """while PC <= (len(l1) - 1) * 4:
     instruction = dict1[PC]
