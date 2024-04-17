@@ -176,8 +176,10 @@ def b_type(instruction):
     #print program counter
 
     print("0b"+decimal_binary_32bits(PC)+" ")
+    output_file.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i])+" ")
+      output_file.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
 
@@ -201,8 +203,10 @@ def s_type(instruction):
     # for address, value in data_memory.items():
     #     print(f'{(address)}: {value}')
     print("0b"+decimal_binary_32bits(PC)+" ")
+    output_file.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i])+" ")
+      output_file.write("0b"+decimal_binary_32bits(PC)+" ")
 
     return PC
 
@@ -240,14 +244,16 @@ def j_type(instruction):
     PC+=imm_value
     #print program counter
     print("0b"+decimal_binary_32bits(PC)+" ")
+    output_file.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i])+" ")
+      output_file.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
 
 
 def u_type(instruction):
-    global dict, pc
+    global dict,PC
     imm = instruction[0:20]
     imm_value = signed_binary_to_int(imm)
     opcode = instruction[25:]
@@ -256,15 +262,17 @@ def u_type(instruction):
     if opcode == "0110111":
         result = imm_value
     elif opcode == "0010111":
-        result = int(pc) + imm_value
+        result = int(PC) + imm_value
 
     dict[registers[rd]] = (result)
-    pc+=4
+    PC+=4
     #print program counter
-    print("0b"+decimal_binary_32bits(pc))
+    print("0b"+decimal_binary_32bits(PC))
+    output_file.write("0b"+decimal_binary_32bits(PC))
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i]))
-    return pc
+      output_file.write("0b"+decimal_binary_32bits(PC))
+    return PC
 
 def r_type(instruction):
     global dict_registers, PC
@@ -299,7 +307,10 @@ def r_type(instruction):
         dict[rd] = int(dict[rs1]) ^ int(dict[rs2])  # Bitwise Exor
 
     elif func3 == '101' and func7 == '0000000':
-        shift_count = (dict[rs2][0:5])
+        shift_count_int = (dict[rs2])
+        shift_count_bin = decimal_binary_32bits(shift_count_int) 
+        shift_count_bin = shift_count_bin[27:]
+        shift_count = int(shift_count_bin,2)
         # Ensure shift count is non-negative
         shift_count = max(shift_count, 0)
         dict[rd] = dict[rs1] << shift_count  # Left shift rs1 by the non-negative value in lower 5 bits of rs2
@@ -319,8 +330,10 @@ def r_type(instruction):
     PC+=4
     #print program counter
     print("0b"+decimal_binary_32bits(PC),sep=" ")
+    output_file.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i]),sep=" ")
+      output_file.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
 
@@ -351,8 +364,10 @@ def i_type(instruction):
     PC += 4
 
     print("0b"+decimal_binary_32bits(PC))
+    output_file.write("0b"+decimal_binary_32bits(PC)+" ")
     for i in list(dict.keys()):
         print("0b"+decimal_binary_32bits(dict[i]))
+        output_file.write("0b"+decimal_binary_32bits(dict[i])+" ")
     return PC
 
 
@@ -405,13 +420,20 @@ l2=[]
 dict1={}
 with open(r"C:\Users\garvi\OneDrive\Desktop\GARVIT\study material\co_project_w24\s_test3.txt","r") as f:
     data=f.readlines()
+    count=0
     for lines in data:
-        l1.append(lines.strip())
-        lines=(lines.strip())
-        dict1[l1.index(lines)*4]=lines
+        lines=lines.strip()
+        l1.append(lines)
+        #l1.append(lines.strip())
+        #lines=(lines.strip())
+        #dict1[l1.index(lines)*4]=lines
+        dict1[count*4]=lines
         lines=int(lines)
         l2.append(f'0x{lines:0>8X}')
+        count+=1
 
+#for key in dict1:
+#    print(key,dict1[key])
 
 
 program_memory = {}
@@ -469,6 +491,7 @@ PC=0
 #         PC=b_type(instruction)
 #     elif temp=="U":
 #         PC=u_type(instruction)
+output_file = open(r"C:\Users\garvi\OneDrive\Desktop\GARVIT\study material\co_project_w24\s_output.txt", "w")
 while (PC <= (len(l1) - 1) * 4) :
     instruction = dict1[PC]
     if (str(instruction)=="00000000000000000000000001100011"):
@@ -476,11 +499,11 @@ while (PC <= (len(l1) - 1) * 4) :
     #elif (str(instruction)=="00000000000000000000000001100011" and len(l1)!=(PC//4)+1):
         #print("error")
         #break
-    print("Instruction:", instruction)  # Print the current instruction being executed
+    #print("Instruction:", instruction)  # Print the current instruction being executed
     opcode_value = instruction[25:]
-    print("Opcode value:", opcode_value)  # Print the opcode value of the instruction
+    #print("Opcode value:", opcode_value)  # Print the opcode value of the instruction
     temp = opcode[opcode_value]
-    print("Temp:", temp)  # Print the type of instruction (R, S, I, J, B, U)
+    #print("Temp:", temp)  # Print the type of instruction (R, S, I, J, B, U)
     if temp == "R":
         PC = r_type(instruction)
     elif temp == "S":
@@ -493,7 +516,7 @@ while (PC <= (len(l1) - 1) * 4) :
         PC = b_type(instruction)
     elif temp == "U":
         PC = u_type(instruction)
-    print("PC:", PC)  # Print the updated value of the program counter after executing the instruction
+    #print("PC:", PC)  # Print the updated value of the program counter after executing the instruction
 
 """while PC <= (len(l1) - 1) * 4:
     instruction = dict1[PC]
