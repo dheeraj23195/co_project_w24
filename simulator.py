@@ -184,37 +184,37 @@ def func_B(instruction):
 
     if(func3=="000"):
         if(dict[rs1]==dict[rs2]):
-            # PC+=  sext(immediate)
+            PC+=  sext(immediate)
         else:
             PC+=4
 
     elif(func3=="001"):
-        if(dict[rs1]!=dict[rs2])
-            # PC+=  sext(immediate)
+        if(dict[rs1]!=dict[rs2]):
+            PC+=  sext(immediate)
         else:
             PC+=4
 
     elif(func3=="100"):
         if(dict[rs1]<dict[rs2]):
-            # PC+=  sext(immediate)
+            PC+=  sext(immediate)
         else:
             PC+=4
 
     elif(func3=="101"):
         if(dict[rs1]>dict[rs2]):
-            # PC+=  sext(immediate)
+            PC+=  sext(immediate)
         else:
             PC+=4
 
     elif(func3=="110"):
         if(dict[rs1]<dict[rs2]):
-            # PC+=  sext(immediate)
-        else
+            PC+=  sext(immediate)
+        else:
             PC+=4
 
     elif(func3=="111"):
         if(dict[rs1]>dict[rs2]):
-            # PC+=  sext(immediate)
+            PC+=  sext(immediate)
         else:
             PC+=4
     pc+=4
@@ -228,7 +228,7 @@ def func_B(instruction):
 def s_type(instruction):
     global dict, data_memory, PC
 
-    imm = instruction[0:7] + instruction[]  # Immediate value, 7 bits
+    imm = instruction[0:7] + instruction  # Immediate value, 7 bits
     imm_value = signed_binary_to_int(imm)
 
     rs2 = registers[instruction[7:12]]  # Source register 2
@@ -271,7 +271,7 @@ def j_type(instruction):
     print("0b"+decimal_binary_32bits(pc)+" ")
     for i in list(dict.keys()):
       print("0b"+decimal_binary_32bits(dict[i])+" ")
-     return PC
+    return PC
 
 
 def u_type(instruction):
@@ -325,7 +325,7 @@ def r_type(instruction):
         dict[rd] = [rs1] <<dict[rs2]
     elif func3 == '010' and func7 == '0000000':
         # SLT
-        if dict[rs1] < int(dict[rs2]:
+        if dict[rs1] < int(dict[rs2]):
             dict[rd] = 1
         else:
             dict[rd] = 0
@@ -343,10 +343,10 @@ def r_type(instruction):
         dict[rd] = dict[rs1] >> dict[rs2]
     elif func3 == '110' and func7 == '0000000':
         # OR
-        dict[rd] = dict[rs1] | int(dict[rs2]))
+        dict[rd] = dict[rs1] | int(dict[rs2])
     elif func3 == '111' and func7 == '0000000':
         # AND
-        dict[rd] = int(dict[rs1]) & int(dict[rs2]))
+        dict[rd] = int(dict[rs1]) & int(dict[rs2])
 
     pc+=4
     #print program counter
