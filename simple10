@@ -1,2 +1,0 @@
-label: beq t1,t1,label
-beq zero,zero,0
