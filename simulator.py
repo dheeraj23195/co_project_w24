@@ -298,15 +298,18 @@ def blt(rs1,rs2,imm,pc):
 #S Type
 def sw(code,pc):
     imm = code[-32:-25] + code[-12:-7]
+    imm=sext(imm)
     rs1 = code[-20:-15]
-    val1=bintodecs(registers[rs1])
     pc+=4
+    val1=bintodecs(registers[rs1])
     rs2 = code[-25:-20]
-    val2= bintodecs(sext(imm))
+    val2= bintodecs(imm)
     add = val1 + val2
     add = hex(add)
-    while(len(add)<10):
+    length=len(add)
+    while(length<10):
         add = "0x" + "0" + add[2:]
+        length=len(add)
     memory[add] = registers[rs2]
     return pc
 
@@ -314,38 +317,47 @@ def sw(code,pc):
 #J Type
 def jal(code,pc):
     imm = code[-32] + code[-20:-12] + code[-21] + code[-31:-21] + "0"
+    imm = sext(imm)
     rd = code[-12:-7]
     temp = pc + 4
+    imm = bintodecs(imm)
     temp = decimaltobinaryreal(temp)
     registers[rd] = temp
-    pc = pc + bintodecs(sext(imm))
+    pc = pc + imm
     if pc%2==1:
         pc = pc - 1
     return pc
 
 #U Type
 def auipc(code,pc):
-    imm = code[-32:-12] + "000000000000"
+    filler="000000000000"
+    imm = code[-32:-12] + filler
     imm = bintodecs(imm)
-    rd = code[-12:-7]
     temp = pc + imm
     temp = decimaltobinaryreal(temp)
+    pc+=4
+    rd = code[-12:-7]
     registers[rd] = temp
-    return pc+4
+
+    return pc
 
 def lui(code,pc):
-    imm = code[-32:-12] + "000000000000"
+    filler="000000000000"
+    imm = code[-32:-12] + filler
+    pc+=4
     rd = code[-12:-7]
     registers[rd] = imm
-    return pc+4
+    return pc
 
 
 
 #Reg print and main
 def RegPrint(l):
     s=""
+    s1=""
     for i in registers.keys():
-        s=s+("0b"+registers[i]+" ")
+        s1="0b"+registers[i]+" "
+        s=s+s1
     s+="\n"
     l.append(s)
 
@@ -458,6 +470,9 @@ registers={
     '11101':'00000000000000000000000000000000',
     '11110':'00000000000000000000000000000000',
     '11111':'00000000000000000000000000000000'}
+
+l=[]
+
 memory= {
     "0x00010000": "00000000000000000000000000000000",
     "0x00010004": "00000000000000000000000000000000",
@@ -491,7 +506,6 @@ memory= {
     "0x00010074": "00000000000000000000000000000000",
     "0x00010078": "00000000000000000000000000000000",
     "0x0001007c": "00000000000000000000000000000000"}
-l=[]
 
 Main(registers, memory, pc_dic)
 
